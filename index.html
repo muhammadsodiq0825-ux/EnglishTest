@@ -152,6 +152,7 @@ main{flex:1;padding:22px 18px 60px;}
 .unit-tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 6px;text-align:center;cursor:pointer;transition:.15s;font-weight:700;}
 .unit-tile:hover{border-color:var(--accent);color:var(--accent);}
 .unit-tile .u-label{font-size:10px;color:var(--muted);display:block;font-weight:600;margin-bottom:2px;}
+.unit-tile .u-title{font-size:9px;color:var(--muted);margin-top:3px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
 
 /* ---------- Unit / word list ---------- */
 .unit-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:18px;}
@@ -419,6 +420,7 @@ function escapeHtml(s) {
 }
 function escapeAttr(s) { return escapeHtml(s); }
 function shortLang(name) { return (name || "").trim().split(/\s+/)[0] || name; }
+function unitLabel(u) { return u.title ? `Bob ${u.unit} — ${u.title}` : `Bob ${u.unit}`; }
 
 // --------------------------------------------------------------------------
 // Load static vocab.json (the original 6 books)
@@ -775,7 +777,10 @@ const Views = {
     const units = book.units || [];
     const tiles = units.map(u => {
       const learned = u.words.filter(w => State.difficult[keyFor(book.id, u.unit, w.en)]).length;
-      return `<div class="unit-tile" data-unit="${u.unit}" style="border-color:${learned ? "rgba(232,163,61,.5)" : ""}"><span class="u-label">Bob</span>${u.unit}</div>`;
+      return `<div class="unit-tile" data-unit="${u.unit}" style="border-color:${learned ? "rgba(232,163,61,.5)" : ""}">
+        <span class="u-label">Bob</span>${u.unit}
+        ${u.title ? `<div class="u-title">${escapeHtml(u.title)}</div>` : ""}
+      </div>`;
     }).join("");
 
     const canDelete = book.source !== "static" && State.user && (book.ownerUid === State.user.uid || State.localMode);
@@ -820,7 +825,7 @@ const Views = {
     }).join("");
 
     main.innerHTML = `
-      ${this.crumbs([{ label: "Kutubxona" }, { label: book.title }, { label: "Bob " + unitNum }])}
+      ${this.crumbs([{ label: "Kutubxona" }, { label: book.title }, { label: unitLabel(unit) }])}
       <div class="unit-toolbar">
         <div class="seg" id="dirSeg">
           <button data-dir="a2b" class="${this.unitDirection === "a2b" ? "active" : ""}">${escapeHtml(labelA)} → ${escapeHtml(labelB)}</button>
@@ -828,7 +833,7 @@ const Views = {
         </div>
         <button class="btn-test" id="startTestBtn">📝 Test ishlash (${unit.words.length} savol)</button>
       </div>
-      <div class="section-head"><h1>Bob ${unitNum}</h1><span class="hint">So'zga bosing — tarjimasi ochiladi</span></div>
+      <div class="section-head"><h1>${escapeHtml(unitLabel(unit))}</h1><span class="hint">So'zga bosing — tarjimasi ochiladi</span></div>
       <div class="word-list">${rows}</div>
     `;
     main.querySelectorAll('[data-crumb]').forEach(el => {
@@ -868,7 +873,7 @@ const Views = {
 
     main.innerHTML = `
       <div class="quiz-wrap">
-        <div class="quiz-meta"><span>${escapeHtml(q.book.title)} · Bob ${q.unit.unit}</span><span>${idx + 1} / ${q.questions.length}</span></div>
+        <div class="quiz-meta"><span>${escapeHtml(q.book.title)} · ${escapeHtml(unitLabel(q.unit))}</span><span>${idx + 1} / ${q.questions.length}</span></div>
         <div class="quiz-progress"><div class="quiz-progress-bar" style="width:${progressPct}%"></div></div>
         <div class="quiz-question">
           <div class="q-dir">${q.direction === "a2b" ? `${escapeHtml(labelA)} → ${escapeHtml(labelB)}` : `${escapeHtml(labelB)} → ${escapeHtml(labelA)}`}</div>
@@ -917,7 +922,7 @@ const Views = {
     const missed = q.questions.filter(x => x.wrong);
     main.innerHTML = `
       <div class="result-wrap">
-        <div style="color:var(--muted);font-size:13px;">${escapeHtml(q.book.title)} · Bob ${q.unit.unit} natijasi</div>
+        <div style="color:var(--muted);font-size:13px;">${escapeHtml(q.book.title)} · ${escapeHtml(unitLabel(q.unit))} natijasi</div>
         <div class="result-score">${q.score}/${q.questions.length}</div>
         <div class="result-label">${missed.length === 0 ? "Barakalla! Barcha savollarga to'g'ri javob berdingiz." : missed.length + " ta so'zda xato qildingiz — ular \"Xatolarim\" ro'yxatiga saqlandi."}</div>
         ${missed.length ? `<div class="result-list"><h4>Xato qilingan so'zlar</h4>${missed.map(m => `<div class="result-row"><span class="r-en">${escapeHtml(m.word.en)}</span><span class="r-correct">${escapeHtml(m.word.uz)}</span></div>`).join("")}</div>` : ""}
@@ -1042,36 +1047,130 @@ document.addEventListener("keydown", (e) => {
 // ==========================================================================
 // Generalized book-text parser (shared by the upload wizard)
 // ==========================================================================
+// Real-world vocabulary PDFs/DOCX come in wildly different shapes. Besides
+// the simple "Unit N" + one "word - translation" per line format, many books
+// number each entry (1, 2, 3...) within a topic chapter, and PDF/OCR text
+// extraction very often loses line breaks entirely, jamming a whole chapter
+// of numbered entries into one giant blob. To handle that automatically
+// (without asking the user to manually fix it), we detect entries primarily
+// by their sequential numbering (1,2,3,4,...) rather than by line breaks —
+// this works whether or not the source text has clean line breaks.
+
+function cleanJunk(s) {
+  return s.replace(/\bPage\s+\d+\s+of\s+\d+\b/gi, "").replace(/\s{2,}/g, " ").trim();
+}
+
+// Which dash-like character is the real phrase/translation separator in this
+// document, as opposed to a plain hyphen used *inside* a word (e.g. "close-knit").
+function detectSeparator(text) {
+  const emCount = (text.match(/\s[\u2013\u2014]\s/g) || []).length;
+  const hyphenCount = (text.match(/\s-\s/g) || []).length;
+  if (emCount >= hyphenCount && emCount > 0) return "[\u2013\u2014]";
+  if (hyphenCount > 0) return "-";
+  return "[-\u2013\u2014]";
+}
+
+// Find every "<number><whitespace>" boundary in a block of text, then walk
+// through them picking out numbers that continue a sequential 1,2,3,4,...
+// run — skipping over stray numbers (page markers, figures inside a
+// translation like "24/7") instead of abandoning the whole sequence, so
+// entries split across a page break are still recovered correctly. Uses a
+// lookahead for the trailing whitespace so two adjacent numbers separated by
+// a single space/newline don't "steal" each other's boundary character.
+function findNumberedChain(text) {
+  const re = /(?:^|\s)(\d{1,3})(?=\s)/g;
+  const candidates = [];
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    candidates.push({ num: Number(m[1]), numStart: m.index, textStart: m.index + m[0].length });
+  }
+  if (candidates.length === 0) return [];
+  let startIdx = candidates.findIndex(c => c.num === 1);
+  if (startIdx === -1) startIdx = 0;
+  const accepted = [candidates[startIdx]];
+  let expected = candidates[startIdx].num + 1;
+  for (let j = startIdx + 1; j < candidates.length; j++) {
+    if (candidates[j].num === expected) { accepted.push(candidates[j]); expected += 1; }
+  }
+  return accepted;
+}
+
+function splitEnUz(raw, sep) {
+  const sm = raw.match(new RegExp("^(.+?)\\s*" + sep + "\\s*([\\s\\S]+)$")) || raw.match(/^(.+?)\s*:\s*([\s\S]+)$/);
+  if (!sm) return null;
+  const en = sm[1].replace(/\s+/g, " ").trim();
+  const uz = cleanJunk(sm[2].replace(/\s+/g, " "));
+  if (!en || !uz) return null;
+  return { en, uz };
+}
+
+// Split one accumulated chunk of text (may or may not have real newlines
+// between entries) into {en, uz} word pairs.
+function extractEntries(blockText, sep) {
+  const chain = findNumberedChain(blockText);
+  if (chain.length >= 2) {
+    const entries = [];
+    for (let i = 0; i < chain.length; i++) {
+      const start = chain[i].textStart;
+      const end = i + 1 < chain.length ? chain[i + 1].numStart : blockText.length;
+      const pair = splitEnUz(blockText.slice(start, end).trim(), sep);
+      if (pair) entries.push(pair);
+    }
+    if (entries.length >= 2) return entries;
+  }
+  // Fallback: no reliable numbering found — one entry per physical line
+  // (the classic "word - translation" format with no leading numbers).
+  const lines = blockText.split("\n").map(l => l.replace(/^[\u2022*\-]\s*/, "").trim()).filter(Boolean);
+  const perLine = [];
+  for (const line of lines) {
+    const pair = splitEnUz(line.replace(/^\d{1,3}\s+/, ""), sep);
+    if (pair) perLine.push(pair);
+  }
+  return perLine;
+}
+
 function parseRawText(text, wordsPerUnit) {
-  const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
+  const sep = detectSeparator(text);
+  const sepTestRe = new RegExp(sep);
+  const rawLines = text.split("\n").map(l => l.trim()).filter(Boolean);
+
   const unitHeaderRe = /^(?:unit|bob|bo['\u2019]lim)\s*[:\-\u2013\u2014]?\s*(\d+)$/i;
   const altHeaderRe = /^(\d+)\s*[-\u2013\u2014]?\s*(?:bob|bo['\u2019]lim)$/i;
-  const bulletRe = /^[•*\-]\s*/;
+  // A short numbered "topic title" line with no separator on it at all,
+  // e.g. "1 Family", "2 Relationships" — a chapter heading, not a word entry
+  // (a real vocabulary line always has a translation, hence a separator).
+  const topicHeaderRe = /^(\d{1,3})\s+([A-Za-z][A-Za-z'\u2019\s]{1,40})$/;
 
-  let units = [];
+  const chunks = [];
   let current = null;
   let sawHeader = false;
 
-  for (const raw of lines) {
-    const line = raw.replace(bulletRe, "").trim();
-    const m = line.match(unitHeaderRe) || line.match(altHeaderRe);
-    if (m) { current = { unit: Number(m[1]), words: [] }; units.push(current); sawHeader = true; continue; }
-    const sep = line.match(/^(.+?)\s*[-\u2013\u2014:]\s*(.+)$/);
-    if (!sep) continue;
-    const word = sep[1].trim(), translation = sep[2].trim();
-    if (!word || !translation) continue;
-    if (!current) { current = { unit: 1, words: [] }; units.push(current); }
-    current.words.push({ en: word, uz: translation });
+  for (const raw of rawLines) {
+    const line = raw.replace(/^[\u2022*\-]\s*/, "").trim();
+    let m = line.match(unitHeaderRe) || line.match(altHeaderRe);
+    if (m) { current = { unit: Number(m[1]), title: null, lines: [] }; chunks.push(current); sawHeader = true; continue; }
+    m = line.match(topicHeaderRe);
+    if (m && !sepTestRe.test(line) && !line.includes(":")) {
+      current = { unit: chunks.length + 1, title: m[2].trim(), lines: [] };
+      chunks.push(current); sawHeader = true; continue;
+    }
+    if (!current) { current = { unit: 1, title: null, lines: [] }; chunks.push(current); }
+    current.lines.push(line);
   }
+
+  let units = chunks
+    .map(c => ({ unit: c.unit, title: c.title, words: extractEntries(c.lines.join("\n"), sep) }))
+    .filter(u => u.words.length > 0);
 
   if (!sawHeader) {
     const all = units.flatMap(u => u.words);
     const rechunked = [];
-    for (let i = 0; i < all.length; i += wordsPerUnit) rechunked.push({ unit: rechunked.length + 1, words: all.slice(i, i + wordsPerUnit) });
+    for (let i = 0; i < all.length; i += wordsPerUnit) rechunked.push({ unit: rechunked.length + 1, title: null, words: all.slice(i, i + wordsPerUnit) });
     return rechunked;
   }
-  return units.filter(u => u.words.length > 0);
+  return units.map((u, i) => ({ unit: i + 1, title: u.title, words: u.words }));
 }
+
 function unitToText(unit) { return unit.words.map(w => `${w.en} - ${w.uz}`).join("\n"); }
 function textToWords(text) {
   const bulletRe = /^[•*\-]\s*/;
@@ -1121,6 +1220,38 @@ const Extract = {
     return result.value;
   },
 
+  // pdf.js's getTextContent() returns text fragments with position data but no
+  // line breaks. Naively joining them with spaces crushes an entire page (or a
+  // whole vocabulary chapter) into one giant line, which is exactly what broke
+  // parsing before. We rebuild real lines by grouping fragments that share
+  // roughly the same vertical position, and — since many vocabulary books are
+  // laid out in two columns — split the page into a left/right column first
+  // when the fragments clearly cluster that way.
+  reconstructPageText(items, pageWidth) {
+    if (items.length === 0) return "";
+    const xs = items.map(it => it.transform[4]);
+    const minX = Math.min(...xs), maxX = Math.max(...xs);
+    const mid = (minX + maxX) / 2;
+    const left = items.filter(it => it.transform[4] < mid);
+    const right = items.filter(it => it.transform[4] >= mid);
+    const isTwoColumn = pageWidth && left.length >= items.length * 0.25 && right.length >= items.length * 0.25;
+
+    const linesFromItems = (arr) => {
+      const groups = [];
+      arr.forEach(it => {
+        const y = it.transform[5];
+        let g = groups.find(g => Math.abs(g.y - y) <= 3);
+        if (!g) { g = { y, items: [] }; groups.push(g); }
+        g.items.push({ x: it.transform[4], str: it.str });
+      });
+      groups.sort((a, b) => b.y - a.y);
+      return groups.map(g => g.items.sort((a, b) => a.x - b.x).map(it => it.str).join(" ")).join("\n");
+    };
+
+    if (isTwoColumn) return linesFromItems(left) + "\n" + linesFromItems(right);
+    return linesFromItems(items);
+  },
+
   async fromPdf(file, ocrLang, onProgress) {
     onProgress("PDF ochilmoqda...", 5);
     await this.ensurePdfJs();
@@ -1131,7 +1262,8 @@ const Extract = {
     for (let i = 1; i <= n; i++) {
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
-      text += content.items.map(it => it.str).join(" ") + "\n";
+      const viewport = page.getViewport({ scale: 1 });
+      text += this.reconstructPageText(content.items, viewport.width) + "\n";
       onProgress(`Matn chiqarilmoqda: sahifa ${i}/${n}`, 5 + Math.round((i / n) * 35));
     }
 
@@ -1333,7 +1465,7 @@ const Upload = {
     const cards = s.units.map((u, i) => `
       <div class="unit-edit-card" data-idx="${i}">
         <div class="unit-edit-head" data-toggle="${i}">
-          <span class="uh-title">Bob ${u.unit}</span>
+          <span class="uh-title">${escapeHtml(unitLabel(u))}</span>
           <span class="uh-count">${u.words.length} so'z</span>
           <button class="uh-del" data-deleteunit="${i}" title="Bobni o'chirish">✕</button>
         </div>
@@ -1381,7 +1513,7 @@ const Upload = {
     const finalUnits = s.units.map((u, i) => {
       const ta = document.querySelector(`[data-unittext="${i}"]`);
       const text = ta ? ta.value : unitToText(u);
-      return { unit: i + 1, words: textToWords(text) };
+      return { unit: i + 1, title: u.title || null, words: textToWords(text) };
     }).filter(u => u.words.length > 0);
 
     if (finalUnits.length === 0) return toast("Saqlash uchun so'z topilmadi.");

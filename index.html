@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>Dictionary Testing App</title>
-<link rel="icon" type="image/x-icon" href="favicon.ico">
+<title>So'zlar Kutubxonasi — 4000 Essential English Words</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -28,18 +28,19 @@
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
-  background:
-    linear-gradient(180deg, rgba(17,19,28,0.40), rgba(17,19,28,0.70)),
-    radial-gradient(1200px 600px at 80% -10%, #1a2138 0%, transparent 60%),
-    url('rasm.jpg') center center / cover no-repeat fixed,
-    var(--bg);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(1200px 600px at 80% -10%, rgba(232,163,61,0.08) 0%, transparent 60%),
+    linear-gradient(rgba(10,11,17,0.90), rgba(10,11,17,0.93)),
+    url("library-bg.jpg");
+  background-size: auto, auto, cover;
+  background-position: 0 0, 0 0, center center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-attachment: scroll, scroll, fixed;
   color:var(--text);
   font-family:'Manrope',sans-serif;
   min-height:100vh;
   -webkit-font-smoothing:antialiased;
-}
-@media (max-width:640px){
-  body{ background-attachment: scroll; } /* mobil brauzerlarda 'fixed' sekinlik keltirib chiqarishi mumkin */
 }
 h1,h2,h3,.display{font-family:'Fraunces',serif;letter-spacing:-0.01em;}
 button{font-family:inherit;}
@@ -97,7 +98,13 @@ nav.tabs button.active{color:var(--accent);background:var(--panel-2);}
 }
 .user-chip button:hover{border-color:var(--accent);color:var(--accent);}
 
-main{flex:1;padding:22px 18px 60px;}
+main{
+  flex:1;padding:26px 22px 60px;
+  background:rgba(9,10,16,0.58);
+  backdrop-filter:blur(3px);
+  border-radius:0 0 20px 20px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.35);
+}
 
 /* ---------- Auth ---------- */
 .auth-wrap{max-width:400px;margin:6vh auto 0;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:32px 28px;box-shadow:var(--shadow);}
@@ -138,7 +145,7 @@ main{flex:1;padding:22px 18px 60px;}
 .shelf-group-head .lg-icon{font-size:18px;}
 .shelf-group-head h2{font-size:16px;margin:0;font-weight:700;}
 .shelf-group-head .lg-count{font-size:11.5px;color:var(--muted);background:var(--panel);border:1px solid var(--line);padding:2px 9px;border-radius:20px;}
-.shelf{display:flex;gap:14px;padding:26px 20px 34px;background:linear-gradient(180deg, transparent 0%, transparent 82%, #db8b0f 82%, #593715 100%);border-radius:var(--radius);overflow-x:auto;align-items:flex-end;}
+.shelf{display:flex;gap:14px;padding:26px 20px 34px;background:linear-gradient(180deg, transparent 0%, transparent 82%, #2a2113 82%, #171009 100%);border-radius:var(--radius);overflow-x:auto;align-items:flex-end;}
 .spine{--bc:#666;flex:0 0 auto;width:88px;height:230px;border-radius:8px 8px 4px 4px;
   background:linear-gradient(100deg, var(--bc) 0%, color-mix(in srgb, var(--bc) 70%, black) 100%);
   box-shadow: inset 3px 0 0 rgba(255,255,255,0.18), inset -3px 0 0 rgba(0,0,0,0.25), 0 12px 18px rgba(0,0,0,0.4);
@@ -148,6 +155,8 @@ main{flex:1;padding:22px 18px 60px;}
 .spine .num{font-family:'Fraunces',serif;font-size:26px;font-weight:700;text-shadow:0 2px 4px rgba(0,0,0,0.35);}
 .spine .label{writing-mode:vertical-rl;font-size:10.5px;letter-spacing:.03em;font-weight:700;opacity:.92;text-align:center;max-height:120px;overflow:hidden;text-overflow:ellipsis;}
 .spine .prog{font-size:9.5px;background:rgba(0,0,0,0.28);padding:3px 6px;border-radius:20px;font-weight:700;}
+.spine-progress{width:100%;height:4px;background:rgba(0,0,0,0.3);border-radius:4px;overflow:hidden;margin:4px 0;}
+.spine-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));}
 .spine .owner-badge{position:absolute;top:6px;right:6px;font-size:11px;background:rgba(0,0,0,0.35);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;}
 .add-book-spine{--bc:#333;flex:0 0 auto;width:88px;height:230px;border-radius:8px 8px 4px 4px;border:2px dashed var(--line);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);cursor:pointer;transition:.15s;background:rgba(255,255,255,0.02);}
@@ -162,6 +171,13 @@ main{flex:1;padding:22px 18px 60px;}
 .unit-tile:hover{border-color:var(--accent);color:var(--accent);}
 .unit-tile .u-label{font-size:10px;color:var(--muted);display:block;font-weight:600;margin-bottom:2px;}
 .unit-tile .u-title{font-size:9px;color:var(--muted);margin-top:3px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.unit-tile .u-score{margin-top:6px;font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;display:inline-block;}
+.u-score.score-good{background:rgba(76,175,125,0.18);color:var(--good);}
+.u-score.score-mid{background:rgba(232,163,61,0.18);color:var(--accent);}
+.u-score.score-low{background:rgba(224,96,90,0.18);color:var(--bad);}
+.book-progress-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;font-size:12.5px;color:var(--muted);}
+.book-progress-bar{flex:1;max-width:260px;height:7px;background:var(--panel);border-radius:6px;overflow:hidden;}
+.book-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));}
 
 /* ---------- Unit / word list ---------- */
 .unit-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:18px;}
@@ -263,9 +279,25 @@ main{flex:1;padding:22px 18px 60px;}
 /* ---------- misc ---------- */
 .loader{display:flex;align-items:center;justify-content:center;padding:60px;color:var(--muted);font-size:13px;text-align:center;}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:10px 18px;border-radius:10px;font-size:13px;box-shadow:var(--shadow);z-index:100;opacity:0;pointer-events:none;transition:opacity .2s, transform .2s;max-width:90vw;text-align:center;}
+
+/* ---------- Footer ---------- */
+.site-footer{background:#0b0c12;border-top:1px solid var(--line);padding:28px 18px 32px;position:relative;z-index:1;}
+.footer-inner{max-width:1020px;margin:0 auto;text-align:center;}
+.footer-inner h3{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 16px;font-weight:800;}
+.footer-team{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:18px;}
+.footer-member{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;min-width:190px;}
+.fm-role{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+.fm-link{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(160deg,#3aa8e8,#1c7cc4);color:#fff;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;}
+.fm-link:hover{filter:brightness(1.12);}
+.footer-copy{font-size:11px;color:var(--muted);}
+@media (max-width:640px){
+  .footer-member{min-width:0;width:100%;max-width:280px;}
+  .site-footer{padding-bottom:90px;}
+}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
 
 @media (max-width:640px){
+  body{background-attachment: scroll, scroll, scroll;}
   header.topbar{padding:10px 12px;}
   .brand-sub{display:none;}
   .brand-title{font-size:14.5px;}
@@ -292,10 +324,10 @@ main{flex:1;padding:22px 18px 60px;}
 
   <header class="topbar" id="topbar">
     <div class="brand" onclick="Nav.go('shelf')">
-      <div class="brand-mark"><img src="favicon.ico" alt="logo"></div>
+      <div class="brand-mark"><img src="favicon.ico?v=2" alt="logo"></div>
       <div>
-        <div class="brand-title">Dictionary Testing App</div>
-        <div class="brand-sub">Kitobni Yuklang, O'ynab Yodlang</div>
+        <div class="brand-title">So'zlar Kutubxonasi</div>
+        <div class="brand-sub">4000 Essential English Words</div>
       </div>
     </div>
     <div class="search-wrap hidden" id="searchWrap">
@@ -319,12 +351,33 @@ main{flex:1;padding:22px 18px 60px;}
 
 </div>
 
+<footer class="site-footer">
+  <div class="footer-inner">
+    <h3>Loyiha jamoasi</h3>
+    <div class="footer-team">
+      <div class="footer-member">
+        <span class="fm-role">G'oya va kontseptsiya</span>
+        <a class="fm-link" href="https://t.me/QuantumCrazyland" target="_blank" rel="noopener">✈️ Muhammadjon Tursunqulov</a>
+      </div>
+      <div class="footer-member">
+        <span class="fm-role">Dasturchi</span>
+        <a class="fm-link" href="https://t.me/Turkistan_Science" target="_blank" rel="noopener">✈️ Muhammad Sodiq Shamsiddinov</a>
+      </div>
+      <div class="footer-member">
+        <span class="fm-role">Test va fikr-mulohaza</span>
+        <a class="fm-link" href="https://t.me/Odilbek5907" target="_blank" rel="noopener">✈️ Odilbek Berdiyorov</a>
+      </div>
+    </div>
+    <div class="footer-copy">© 2026 So'zlar Kutubxonasi</div>
+  </div>
+</footer>
+
 <div class="toast" id="toast"></div>
 
 <template id="tpl-auth">
   <div class="auth-wrap">
     <div class="auth-hero">
-      <div class="brand-mark"><img src="favicon.ico" alt="logo"></div>
+      <div class="brand-mark"><img src="favicon.ico?v=2" alt="logo"></div>
       <h1 id="authTitle">Xush kelibsiz</h1>
       <p>So'z boyligingizni oshiring — natijalaringiz saqlanadi</p>
     </div>
@@ -354,17 +407,16 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, deleteField,
-  collection, query, orderBy, writeBatch, serverTimestamp, deleteDoc
+  collection, query, orderBy, where, writeBatch, serverTimestamp, deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB2KIWXGGmptjJVc8klRc8NuH1OKx7w72I",
-  authDomain: "englishtest-eac93.firebaseapp.com",
-  projectId: "englishtest-eac93",
-  storageBucket: "englishtest-eac93.firebasestorage.app",
-  messagingSenderId: "83760408717",
-  appId: "1:83760408717:web:fc0927999e012a54c45ac4",
-  measurementId: "G-WTN0V0GX93"
+  apiKey: "REPLACE_ME",
+  authDomain: "REPLACE_ME.firebaseapp.com",
+  projectId: "REPLACE_ME",
+  storageBucket: "REPLACE_ME.appspot.com",
+  messagingSenderId: "REPLACE_ME",
+  appId: "REPLACE_ME"
 };
 const CONFIG_IS_PLACEHOLDER = firebaseConfig.apiKey === "REPLACE_ME";
 
@@ -385,13 +437,13 @@ const LOCAL_KEY = "vocab_kutubxona_local_v2";
 function loadLocalStore() {
   try {
     const raw = localStorage.getItem(LOCAL_KEY);
-    return raw ? JSON.parse(raw) : { difficult: {}, mistakes: {}, books: [] };
-  } catch (e) { return { difficult: {}, mistakes: {}, books: [] }; }
+    return raw ? JSON.parse(raw) : { difficult: {}, mistakes: {}, books: [], progress: {} };
+  } catch (e) { return { difficult: {}, mistakes: {}, books: [], progress: {} }; }
 }
 function saveLocalStore() {
   try {
     localStorage.setItem(LOCAL_KEY, JSON.stringify({
-      difficult: State.difficult, mistakes: State.mistakes, books: State.localBooks
+      difficult: State.difficult, mistakes: State.mistakes, books: State.localBooks, progress: State.progress
     }));
   } catch (e) { /* ignore quota errors */ }
 }
@@ -408,6 +460,7 @@ const State = {
   localBooks: [],        // (local mode only) uploaded books, persisted to localStorage
   difficult: {},
   mistakes: {},
+  progress: {},          // key -> {book, unit, score, total, at} — last test result per chapter
   route: { name: "loading" },
   quiz: null,
   shelfQuery: "",
@@ -417,7 +470,16 @@ const State = {
 function keyFor(book, unit, en) {
   return `${book}_${unit}_${en}`.toLowerCase().replace(/[^a-z0-9_]/g, "_");
 }
+function progKey(book, unit) {
+  return `${book}_${unit}`.toLowerCase().replace(/[^a-z0-9_]/g, "_");
+}
 function colorFor(index) { return DEFAULT_COLORS[index % DEFAULT_COLORS.length]; }
+function bookProgressPercent(book) {
+  const totalUnits = book.unitCount || (book.units ? book.units.length : 0);
+  if (!totalUnits) return 0;
+  const doneCount = Object.values(State.progress).filter(p => String(p.book) === String(book.id)).length;
+  return Math.round(100 * Math.min(doneCount, totalUnits) / totalUnits);
+}
 
 let toastTimer = null;
 function toast(msg) {
@@ -457,6 +519,7 @@ async function loadUserData(uid) {
     State.difficult = local.difficult || {};
     State.mistakes = local.mistakes || {};
     State.localBooks = local.books || [];
+    State.progress = local.progress || {};
     return;
   }
   const ref = doc(db, "users", uid);
@@ -465,9 +528,10 @@ async function loadUserData(uid) {
     const data = snap.data();
     State.difficult = data.difficult || {};
     State.mistakes = data.mistakes || {};
+    State.progress = data.progress || {};
   } else {
-    await setDoc(ref, { difficult: {}, mistakes: {} });
-    State.difficult = {}; State.mistakes = {};
+    await setDoc(ref, { difficult: {}, mistakes: {}, progress: {} });
+    State.difficult = {}; State.mistakes = {}; State.progress = {};
   }
 }
 
@@ -501,6 +565,15 @@ async function removeMistake(k) {
   if (State.localMode) { saveLocalStore(); return; }
   await updateDoc(doc(db, "users", State.user.uid), { [`mistakes.${k}`]: deleteField() });
 }
+async function recordProgress(bookId, unitNum, score, total) {
+  const k = progKey(bookId, unitNum);
+  const entry = { book: bookId, unit: unitNum, score, total, at: Date.now() };
+  State.progress[k] = entry;
+  if (State.localMode) { saveLocalStore(); return; }
+  try {
+    await updateDoc(doc(db, "users", State.user.uid), { [`progress.${k}`]: entry });
+  } catch (e) { console.error("Natijani saqlashda xato:", e); }
+}
 
 // --------------------------------------------------------------------------
 // Firestore / local persistence — user-uploaded books
@@ -508,17 +581,30 @@ async function removeMistake(k) {
 async function fetchDynamicBooks() {
   const results = [];
   if (State.localMode) {
-    State.localBooks.forEach((b, i) => results.push({ ...b, source: b.visibility === "public" ? "public" : "personal", color: colorFor(i + 6) }));
+    State.localBooks.forEach((b, i) => {
+      const source = b.visibility === "public" ? "public" : b.visibility === "group" ? "group" : "personal";
+      results.push({ ...b, source, color: colorFor(i + 6) });
+    });
     return results;
   }
   if (!firebaseReady) return results;
+  const myEmail = (State.user && State.user.email || "").toLowerCase();
   try {
-    const pubSnap = await getDocs(query(collection(db, "books"), orderBy("createdAt", "desc")));
-    pubSnap.docs.forEach((d, i) => {
+    const pubSnap = await getDocs(query(collection(db, "books"), where("visibility", "==", "public"), orderBy("createdAt", "desc")));
+    pubSnap.docs.forEach((d) => {
       const data = d.data();
       results.push({ id: d.id, ...data, units: null, source: "public", color: colorFor(results.length + 6) });
     });
   } catch (e) { console.error("Ommaviy kitoblarni yuklashda xato:", e); }
+  if (myEmail) {
+    try {
+      const grpSnap = await getDocs(query(collection(db, "books"), where("visibility", "==", "group"), where("allowedEmails", "array-contains", myEmail)));
+      grpSnap.docs.forEach((d) => {
+        const data = d.data();
+        results.push({ id: d.id, ...data, units: null, source: "group", color: colorFor(results.length + 6) });
+      });
+    } catch (e) { console.error("Guruh kitoblarini yuklashda xato:", e); }
+  }
   if (State.user && State.user.uid) {
     try {
       const persSnap = await getDocs(collection(db, "users", State.user.uid, "personalBooks"));
@@ -536,49 +622,71 @@ async function loadBookUnits(book) {
   if (book.source === "static") return book.units;
   if (State.localMode) return book.units || [];
   if (!firebaseReady) return [];
-  const path = book.source === "public"
-    ? ["books", book.id, "units"]
-    : ["users", State.user.uid, "personalBooks", book.id, "units"];
-  const snap = await getDocs(collection(db, ...path));
+  let snap;
+  if (book.source === "public") {
+    snap = await getDocs(query(collection(db, "books", book.id, "units"), where("visibility", "==", "public")));
+  } else if (book.source === "group") {
+    const myEmail = (State.user && State.user.email || "").toLowerCase();
+    snap = await getDocs(query(collection(db, "books", book.id, "units"), where("allowedEmails", "array-contains", myEmail)));
+  } else {
+    snap = await getDocs(collection(db, "users", State.user.uid, "personalBooks", book.id, "units"));
+  }
   const units = snap.docs.map(d => d.data()).sort((a, b) => a.unit - b.unit);
   book.units = units;
   return units;
 }
 
-async function saveNewBook({ title, langFrom, langTo, visibility, units }) {
+function parseEmailList(raw, ownerEmail) {
+  const emails = (raw || "")
+    .split(/[\n,;]+/)
+    .map(e => e.trim().toLowerCase())
+    .filter(e => e && e.includes("@"));
+  const set = new Set(emails);
+  if (ownerEmail) set.add(ownerEmail.trim().toLowerCase());
+  return [...set];
+}
+
+async function saveNewBook({ title, langFrom, langTo, visibility, groupEmails, units }) {
   const wordCount = units.reduce((s, u) => s + u.words.length, 0);
+  const allowedEmails = visibility === "group" ? parseEmailList(groupEmails, State.user && State.user.email) : null;
 
   if (State.localMode) {
     const id = "local_" + Date.now();
-    const bookObj = { id, title, langFrom, langTo, visibility, units, ownerLabel: "Siz", wordCount, unitCount: units.length };
+    const bookObj = { id, title, langFrom, langTo, visibility, allowedEmails, units, ownerLabel: "Siz", wordCount, unitCount: units.length };
     State.localBooks.push(bookObj);
     saveLocalStore();
-    return { id, source: visibility === "public" ? "public" : "personal" };
+    return { id, source: visibility === "public" ? "public" : visibility === "group" ? "group" : "personal" };
   }
 
   if (!firebaseReady) throw new Error("Firebase sozlanmagan.");
 
   const meta = {
-    title, langFrom, langTo,
+    title, langFrom, langTo, visibility,
     unitCount: units.length, wordCount,
     ownerUid: State.user.uid,
-    ownerEmail: State.user.email || "",
+    ownerEmail: (State.user.email || "").toLowerCase(),
     createdAt: serverTimestamp()
   };
+  if (allowedEmails) meta.allowedEmails = allowedEmails;
 
-  const collPath = visibility === "public"
-    ? ["books"]
-    : ["users", State.user.uid, "personalBooks"];
+  // Public and group books live in the shared top-level "books" collection so
+  // they can be discovered/read by other users; strictly-private books live
+  // under the owner's own subcollection (already isolated by security rules).
+  const collPath = visibility === "private"
+    ? ["users", State.user.uid, "personalBooks"]
+    : ["books"];
 
   const bookRef = doc(collection(db, ...collPath));
   const batch = writeBatch(db);
   batch.set(bookRef, meta);
   units.forEach(u => {
+    const unitData = { unit: u.unit, words: u.words, ownerUid: State.user.uid, visibility };
+    if (allowedEmails) unitData.allowedEmails = allowedEmails;
     const unitRef = doc(collection(db, ...collPath, bookRef.id, "units"), String(u.unit));
-    batch.set(unitRef, { unit: u.unit, words: u.words, ownerUid: State.user.uid });
+    batch.set(unitRef, unitData);
   });
   await batch.commit();
-  return { id: bookRef.id, source: visibility === "public" ? "public" : "personal" };
+  return { id: bookRef.id, source: visibility === "public" ? "public" : visibility === "group" ? "group" : "personal" };
 }
 
 async function deleteBook(book) {
@@ -588,10 +696,12 @@ async function deleteBook(book) {
     return;
   }
   if (!firebaseReady) return;
-  const path = book.source === "public" ? ["books", book.id] : ["users", State.user.uid, "personalBooks", book.id];
-  // Delete unit docs first (best-effort), then the book doc.
+  const path = book.source === "personal" ? ["users", State.user.uid, "personalBooks", book.id] : ["books", book.id];
+  // Delete unit docs first (best-effort), then the book doc. Filtered by
+  // ownerUid so the query matches the Firestore rule (only the owner may
+  // delete, and only-owner-matching documents may be listed at all).
   try {
-    const unitsSnap = await getDocs(collection(db, ...path, "units"));
+    const unitsSnap = await getDocs(query(collection(db, ...path, "units"), where("ownerUid", "==", State.user.uid)));
     const batch = writeBatch(db);
     unitsSnap.docs.forEach(d => batch.delete(d.ref));
     await batch.commit();
@@ -746,12 +856,15 @@ const Views = {
     const groupHtml = order.map(key => {
       const groupBooks = groups[key];
       const spines = groupBooks.map(book => {
-        const owner = book.source === "personal" ? `<span class="owner-badge" title="Faqat sizga ko'rinadi">🔒</span>` : "";
+        const owner = book.source === "personal" ? `<span class="owner-badge" title="Faqat sizga ko'rinadi">🔒</span>`
+          : book.source === "group" ? `<span class="owner-badge" title="Faqat guruh a'zolariga ko'rinadi">👥</span>` : "";
+        const pct = bookProgressPercent(book);
         return `<div class="spine" style="--bc:${book.color}" data-book="${book.id}" data-source="${book.source}">
           ${owner}
           <span class="num">${typeof book.id === "number" ? book.id : "★"}</span>
           <span class="label">${escapeHtml(book.title)}</span>
-          <span class="prog">${book.unitCount || (book.units ? book.units.length : "?")} bob</span>
+          <div class="spine-progress"><div class="spine-progress-fill" style="width:${pct}%"></div></div>
+          <span class="prog">${book.unitCount || (book.units ? book.units.length : "?")} bob${pct ? " · " + pct + "%" : ""}</span>
         </div>`;
       }).join("");
       return `
@@ -790,17 +903,27 @@ const Views = {
     const units = book.units || [];
     const tiles = units.map(u => {
       const learned = u.words.filter(w => State.difficult[keyFor(book.id, u.unit, w.en)]).length;
+      const prog = State.progress[progKey(book.id, u.unit)];
+      let scoreBadge = "";
+      if (prog) {
+        const pct = Math.round(100 * prog.score / prog.total);
+        const cls = pct >= 80 ? "score-good" : pct >= 50 ? "score-mid" : "score-low";
+        scoreBadge = `<div class="u-score ${cls}">${prog.score}/${prog.total}</div>`;
+      }
       return `<div class="unit-tile" data-unit="${u.unit}" style="border-color:${learned ? "rgba(232,163,61,.5)" : ""}">
         <span class="u-label">Bob</span>${u.unit}
         ${u.title ? `<div class="u-title">${escapeHtml(u.title)}</div>` : ""}
+        ${scoreBadge}
       </div>`;
     }).join("");
 
     const canDelete = book.source !== "static" && State.user && (book.ownerUid === State.user.uid || State.localMode);
+    const pct = bookProgressPercent(book);
 
     main.innerHTML = `
       ${this.crumbs([{ label: "Kutubxona" }, { label: book.title }])}
       <div class="section-head"><h1>${escapeHtml(book.title)}</h1><span class="hint">${units.length} bob · ${book.langFrom} → ${book.langTo}</span></div>
+      ${units.length ? `<div class="book-progress-row"><div class="book-progress-bar"><div class="book-progress-fill" style="width:${pct}%"></div></div><span>${pct}% tugallangan</span></div>` : ""}
       ${units.length ? `<div class="units-grid">${tiles}</div>` : `<div class="no-results">Bu kitobda hali bob yo'q.</div>`}
       ${canDelete ? `<div style="margin-top:22px;"><button class="btn btn-ghost" id="deleteBookBtn" style="width:auto;color:var(--bad);">🗑 Kitobni o'chirish</button></div>` : ""}
     `;
@@ -935,7 +1058,10 @@ const Views = {
 
     document.getElementById("quizNextBtn").onclick = () => {
       if (idx + 1 < q.questions.length) { q.index++; this.quiz(main); }
-      else Nav.go("result");
+      else {
+        recordProgress(q.book.id, q.unit.unit, q.score, q.questions.length);
+        Nav.go("result");
+      }
     };
     document.getElementById("quizExitBtn").onclick = () => {
       if (confirm("Testni to'xtatib, bobga qaytasizmi?")) Nav.go("unit", { bookId: q.book.id, bookSource: q.book.source, unitNum: q.unit.unit });
@@ -1339,7 +1465,7 @@ const Upload = {
   fresh() {
     return {
       step: 1, file: null,
-      title: "", langFrom: "", langTo: "", visibility: "public",
+      title: "", langFrom: "", langTo: "", visibility: "public", groupEmails: "",
       wordsPerUnit: 20, ocrLang: "eng",
       rawText: "", units: [],
       busy: false, busyText: "", busyPct: 0
@@ -1394,12 +1520,22 @@ const Upload = {
               <div class="ro-title">Hammaga<span class="recommend-tag">tavsiya etiladi</span></div>
               <div class="ro-sub">Saytdagi barcha foydalanuvchilar ko'radi va foydalanadi</div>
             </div>
+            <div class="radio-opt ${s.visibility === "group" ? "active" : ""}" data-vis="group">
+              <div class="ro-title">Guruhga</div>
+              <div class="ro-sub">Faqat siz kiritgan email egalari ko'radi (masalan o'quvchilaringiz)</div>
+            </div>
             <div class="radio-opt ${s.visibility === "private" ? "active" : ""}" data-vis="private">
               <div class="ro-title">Faqat menga</div>
               <div class="ro-sub">Shaxsiy ro'yxatingizda, boshqalarga ko'rinmaydi</div>
             </div>
           </div>
         </div>
+        ${s.visibility === "group" ? `
+        <div class="field">
+          <label>Guruh a'zolarining email manzillari (har birini yangi qatorga yoki vergul bilan yozing)</label>
+          <textarea id="upGroupEmails" rows="4" style="width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--line);background:var(--bg-soft);color:var(--text);font-size:13.5px;font-family:'Courier New',monospace;resize:vertical;" placeholder="ali@misol.com&#10;vali@misol.com">${escapeHtml(s.groupEmails)}</textarea>
+          <div class="subhint">Ko'rsatilgan emaillar bilan ro'yhatdan o'tgan foydalanuvchilargina bu kitobni ko'ra oladi. Siz o'zingiz ham avtomatik qo'shilasiz.</div>
+        </div>` : ""}
         <div class="field"><label>Bobda nechta so'z (kitobda bob belgisi topilmasa shu son bo'yicha bo'linadi)</label><input type="number" id="upWordsPerUnit" value="${s.wordsPerUnit}" min="5" max="60"></div>
         <div class="field"><label>Fayl (.pdf yoki .docx)</label><input type="file" id="upFile" accept=".pdf,.docx"></div>
         <div class="field" id="ocrLangField">
@@ -1427,6 +1563,8 @@ const Upload = {
     document.getElementById("upWordsPerUnit").oninput = (e) => s.wordsPerUnit = Number(e.target.value) || 20;
     document.getElementById("upOcrLang").onchange = (e) => s.ocrLang = e.target.value;
     document.getElementById("upFile").onchange = (e) => s.file = e.target.files[0] || null;
+    const groupEmailsEl = document.getElementById("upGroupEmails");
+    if (groupEmailsEl) groupEmailsEl.oninput = (e) => s.groupEmails = e.target.value;
     document.querySelectorAll(".radio-opt").forEach(el => {
       el.onclick = () => { s.visibility = el.dataset.vis; this.renderStep1(); };
     });
@@ -1438,6 +1576,7 @@ const Upload = {
     if (!s.title.trim()) return toast("Kitob nomini kiriting");
     if (!s.langFrom.trim() || !s.langTo.trim()) return toast("Tillarni kiriting");
     if (!s.file) return toast("Faylni tanlang");
+    if (s.visibility === "group" && !s.groupEmails.trim()) return toast("Guruh a'zolarining emaillarini kiriting");
 
     const busyBox = document.getElementById("busyBox");
     busyBox.classList.remove("hidden");
@@ -1548,13 +1687,15 @@ const Upload = {
     try {
       const { id, source } = await saveNewBook({
         title: s.title.trim(), langFrom: s.langFrom.trim(), langTo: s.langTo.trim(),
-        visibility: s.visibility, units: finalUnits
+        visibility: s.visibility, groupEmails: s.groupEmails, units: finalUnits
       });
       const wordCount = finalUnits.reduce((sum, u) => sum + u.words.length, 0);
+      const allowedEmails = s.visibility === "group" ? parseEmailList(s.groupEmails, State.user && State.user.email) : null;
       State.vocab.push({
         id, title: s.title.trim(), langFrom: s.langFrom.trim(), langTo: s.langTo.trim(),
         units: finalUnits, unitCount: finalUnits.length, wordCount,
-        source, ownerUid: State.user ? State.user.uid : null,
+        source, visibility: s.visibility, allowedEmails,
+        ownerUid: State.user ? State.user.uid : null,
         color: colorFor(State.vocab.length)
       });
       toast("Kitob muvaffaqiyatli saqlandi!");

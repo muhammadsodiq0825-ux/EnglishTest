@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>Dictionary Test App</title>
+<title>So'zlar Kutubxonasi — 4000 Essential English Words</title>
 <link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -31,7 +31,7 @@ body{
   background-color: var(--bg);
   background-image:
     radial-gradient(1200px 600px at 80% -10%, rgba(232,163,61,0.08) 0%, transparent 60%),
-    linear-gradient(rgba(10,11,17,0.30), rgba(10,11,17,0.60)),
+    linear-gradient(rgba(10,11,17,0.90), rgba(10,11,17,0.93)),
     url("library-bg.jpg");
   background-size: auto, auto, cover;
   background-position: 0 0, 0 0, center center;
@@ -42,7 +42,7 @@ body{
   min-height:100vh;
   -webkit-font-smoothing:antialiased;
 }
-h1,h2,h3,.display{font-family:'Fraunces',serif;letter-spacing:-0.01em;}
+h1,h2,h3,.display{font-family:'Fraunces',serif;letter-spacing:-0.01em;text-shadow:0 2px 8px rgba(0,0,0,0.6);}
 button{font-family:inherit;}
 a{color:inherit;}
 ::selection{background:var(--accent);color:#1a1a1a;}
@@ -100,10 +100,6 @@ nav.tabs button.active{color:var(--accent);background:var(--panel-2);}
 
 main{
   flex:1;padding:26px 22px 60px;
-  background:rgba(9,10,16,0.58);
-  backdrop-filter:blur(3px);
-  border-radius:0 0 20px 20px;
-  box-shadow:0 20px 50px rgba(0,0,0,0.35);
 }
 
 /* ---------- Auth ---------- */
@@ -134,18 +130,18 @@ main{
 /* ---------- Section headers ---------- */
 .section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;}
 .section-head h1{font-size:24px;margin:0;}
-.section-head .hint{color:var(--muted);font-size:13px;}
-.crumbs{color:var(--muted);font-size:12.5px;margin-bottom:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.section-head .hint{color:var(--muted);font-size:13px;text-shadow:0 1px 6px rgba(0,0,0,0.7);}
+.crumbs{color:var(--muted);font-size:12.5px;margin-bottom:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;text-shadow:0 1px 6px rgba(0,0,0,0.7);}
 .crumbs span.link{cursor:pointer;color:var(--accent);font-weight:600;}
 
 /* ---------- Bookshelf ---------- */
-.shelf-intro{color:var(--muted);font-size:13.5px;margin:-6px 0 22px;max-width:60ch;}
+.shelf-intro{color:var(--muted);font-size:13.5px;margin:-6px 0 22px;max-width:60ch;text-shadow:0 1px 6px rgba(0,0,0,0.7);}
 .shelf-group{margin-bottom:30px;}
 .shelf-group-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
 .shelf-group-head .lg-icon{font-size:18px;}
 .shelf-group-head h2{font-size:16px;margin:0;font-weight:700;}
 .shelf-group-head .lg-count{font-size:11.5px;color:var(--muted);background:var(--panel);border:1px solid var(--line);padding:2px 9px;border-radius:20px;}
-.shelf{display:flex;gap:14px;padding:26px 20px 34px;background:linear-gradient(180deg, transparent 0%, transparent 100%, #e39112 82%, #754f13 100%);border-radius:var(--radius);overflow-x:auto;align-items:flex-end;}
+.shelf{display:flex;gap:14px;padding:26px 20px 34px;background:transparent;border-radius:var(--radius);overflow-x:auto;align-items:flex-end;}
 .spine{--bc:#666;flex:0 0 auto;width:88px;height:230px;border-radius:8px 8px 4px 4px;
   background:linear-gradient(100deg, var(--bc) 0%, color-mix(in srgb, var(--bc) 70%, black) 100%);
   box-shadow: inset 3px 0 0 rgba(255,255,255,0.18), inset -3px 0 0 rgba(0,0,0,0.25), 0 12px 18px rgba(0,0,0,0.4);
@@ -326,8 +322,8 @@ main{
     <div class="brand" onclick="Nav.go('shelf')">
       <div class="brand-mark"><img src="favicon.ico?v=2" alt="logo"></div>
       <div>
-        <div class="brand-title">Dictionary Test App</div>
-        <div class="brand-sub">Kitobni Yuklang, O'ynab Yodlang!</div>
+        <div class="brand-title">So'zlar Kutubxonasi</div>
+        <div class="brand-sub">4000 Essential English Words</div>
       </div>
     </div>
     <div class="search-wrap hidden" id="searchWrap">

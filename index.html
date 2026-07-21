@@ -54,6 +54,8 @@ input,select,textarea{font-family:inherit;}
 
 header.topbar{
   position:sticky;top:0;z-index:20;
+  width:100vw;
+  margin-left:calc(50% - 50vw);
   display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
   padding:12px 18px;
   background:rgba(17,19,28,0.2);
@@ -141,7 +143,21 @@ main{
 .shelf-group-head .lg-icon{font-size:18px;}
 .shelf-group-head h2{font-size:16px;margin:0;font-weight:700;}
 .shelf-group-head .lg-count{font-size:11.5px;color:var(--muted);background:var(--panel);border:1px solid var(--line);padding:2px 9px;border-radius:20px;}
-.shelf{display:flex;gap:14px;padding:26px 20px 34px;background:transparent;border-radius:var(--radius);overflow-x:auto;align-items:flex-end;}
+.shelf{display:flex;gap:14px;padding:26px 20px 40px;border-radius:var(--radius);overflow-x:auto;align-items:flex-end;position:relative;}
+.shelf::before{
+  content:'';
+  position:absolute;
+  left:6px;right:6px;bottom:22px;
+  height:16px;
+  background:linear-gradient(180deg, #a9773c 0%, #85582c 45%, #4e2f15 100%);
+  border-radius:4px;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.18),
+    inset 0 -4px 6px rgba(0,0,0,0.35),
+    0 10px 20px rgba(0,0,0,0.5);
+  z-index:0;
+}
+.shelf > *{position:relative;z-index:1;}
 .spine{--bc:#666;flex:0 0 auto;width:88px;height:230px;border-radius:8px 8px 4px 4px;
   background:linear-gradient(100deg, var(--bc) 70%, color-mix(in srgb, var(--bc) 70%, black) 100%);
   box-shadow: inset 3px 0 0 rgba(255,255,255,0.18), inset -3px 0 0 rgba(0,0,0,0.25), 0 12px 18px rgba(0,0,0,0.4);
@@ -407,13 +423,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB2KIWXGGmptjJVc8klRc8NuH1OKx7w72I",
-  authDomain: "englishtest-eac93.firebaseapp.com",
-  projectId: "englishtest-eac93",
-  storageBucket: "englishtest-eac93.firebasestorage.app",
-  messagingSenderId: "83760408717",
-  appId: "1:83760408717:web:fc0927999e012a54c45ac4",
-  measurementId: "G-WTN0V0GX93"
+  apiKey: "AIzaSyB2KIWXGGmptjJVc8klRc8NuH1OKx7w72I",
+  authDomain: "englishtest-eac93.firebaseapp.com",
+  projectId: "englishtest-eac93",
+  storageBucket: "englishtest-eac93.firebasestorage.app",
+  messagingSenderId: "83760408717",
+  appId: "1:83760408717:web:fc0927999e012a54c45ac4",
+  measurementId: "G-WTN0V0GX93"
 };
 const CONFIG_IS_PLACEHOLDER = firebaseConfig.apiKey === "REPLACE_ME";
 
@@ -586,18 +602,26 @@ async function fetchDynamicBooks() {
   }
   if (!firebaseReady) return results;
   const myEmail = (State.user && State.user.email || "").toLowerCase();
+  // NOTE: each query below intentionally filters on a single field only.
+  // Combining an equality filter with orderBy (or with a second filter on a
+  // different field) requires a Firestore *composite index* that doesn't
+  // exist by default — without it, Firestore silently rejects the whole
+  // query, which looked like "public books disappear after a while" (they
+  // loaded fine right after saving, since that came from local state, but
+  // vanished on the next page load once it had to be queried for real).
+  // Sorting is done client-side afterwards instead of via orderBy().
   try {
-    const pubSnap = await getDocs(query(collection(db, "books"), where("visibility", "==", "public"), orderBy("createdAt", "desc")));
-    pubSnap.docs.forEach((d) => {
-      const data = d.data();
-      results.push({ id: d.id, ...data, units: null, source: "public", color: colorFor(results.length + 6) });
-    });
+    const pubSnap = await getDocs(query(collection(db, "books"), where("visibility", "==", "public")));
+    const pubBooks = pubSnap.docs.map(d => ({ id: d.id, ...d.data(), units: null, source: "public" }));
+    pubBooks.sort((a, b) => (b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0) - (a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0));
+    pubBooks.forEach((b, i) => results.push({ ...b, color: colorFor(results.length + 6) }));
   } catch (e) { console.error("Ommaviy kitoblarni yuklashda xato:", e); }
   if (myEmail) {
     try {
-      const grpSnap = await getDocs(query(collection(db, "books"), where("visibility", "==", "group"), where("allowedEmails", "array-contains", myEmail)));
+      const grpSnap = await getDocs(query(collection(db, "books"), where("allowedEmails", "array-contains", myEmail)));
       grpSnap.docs.forEach((d) => {
         const data = d.data();
+        if (data.visibility !== "group") return; // allowedEmails is also present on the owner's own doc metadata for public books they made group-eligible; keep this filter defensive
         results.push({ id: d.id, ...data, units: null, source: "group", color: colorFor(results.length + 6) });
       });
     } catch (e) { console.error("Guruh kitoblarini yuklashda xato:", e); }
@@ -1195,21 +1219,9 @@ document.addEventListener("keydown", (e) => {
 // ==========================================================================
 // Generalized book-text parser (shared by the upload wizard)
 // ==========================================================================
-// Real-world vocabulary PDFs/DOCX come in wildly different shapes. Besides
-// the simple "Unit N" + one "word - translation" per line format, many books
-// number each entry (1, 2, 3...) within a topic chapter, and PDF/OCR text
-// extraction very often loses line breaks entirely, jamming a whole chapter
-// of numbered entries into one giant blob. To handle that automatically
-// (without asking the user to manually fix it), we detect entries primarily
-// by their sequential numbering (1,2,3,4,...) rather than by line breaks —
-// this works whether or not the source text has clean line breaks.
-
 function cleanJunk(s) {
   return s.replace(/\bPage\s+\d+\s+of\s+\d+\b/gi, "").replace(/\s{2,}/g, " ").trim();
 }
-
-// Which dash-like character is the real phrase/translation separator in this
-// document, as opposed to a plain hyphen used *inside* a word (e.g. "close-knit").
 function detectSeparator(text) {
   const emCount = (text.match(/\s[\u2013\u2014]\s/g) || []).length;
   const hyphenCount = (text.match(/\s-\s/g) || []).length;
@@ -1217,14 +1229,6 @@ function detectSeparator(text) {
   if (hyphenCount > 0) return "-";
   return "[-\u2013\u2014]";
 }
-
-// Find every "<number><whitespace>" boundary in a block of text, then walk
-// through them picking out numbers that continue a sequential 1,2,3,4,...
-// run — skipping over stray numbers (page markers, figures inside a
-// translation like "24/7") instead of abandoning the whole sequence, so
-// entries split across a page break are still recovered correctly. Uses a
-// lookahead for the trailing whitespace so two adjacent numbers separated by
-// a single space/newline don't "steal" each other's boundary character.
 function findNumberedChain(text) {
   const re = /(?:^|\s)(\d{1,3})(?=\s)/g;
   const candidates = [];
@@ -1242,7 +1246,6 @@ function findNumberedChain(text) {
   }
   return accepted;
 }
-
 function splitEnUz(raw, sep) {
   const sm = raw.match(new RegExp("^(.+?)\\s*" + sep + "\\s*([\\s\\S]+)$")) || raw.match(/^(.+?)\s*:\s*([\s\S]+)$/);
   if (!sm) return null;
@@ -1251,9 +1254,6 @@ function splitEnUz(raw, sep) {
   if (!en || !uz) return null;
   return { en, uz };
 }
-
-// Split one accumulated chunk of text (may or may not have real newlines
-// between entries) into {en, uz} word pairs.
 function extractEntries(blockText, sep) {
   const chain = findNumberedChain(blockText);
   if (chain.length >= 2) {
@@ -1266,8 +1266,6 @@ function extractEntries(blockText, sep) {
     }
     if (entries.length >= 2) return entries;
   }
-  // Fallback: no reliable numbering found — one entry per physical line
-  // (the classic "word - translation" format with no leading numbers).
   const lines = blockText.split("\n").map(l => l.replace(/^[\u2022*\-]\s*/, "").trim()).filter(Boolean);
   const perLine = [];
   for (const line of lines) {
@@ -1276,7 +1274,6 @@ function extractEntries(blockText, sep) {
   }
   return perLine;
 }
-
 function parseRawText(text, wordsPerUnit) {
   const sep = detectSeparator(text);
   const sepTestRe = new RegExp(sep);
@@ -1284,9 +1281,6 @@ function parseRawText(text, wordsPerUnit) {
 
   const unitHeaderRe = /^(?:unit|bob|bo['\u2019]lim)\s*[:\-\u2013\u2014]?\s*(\d+)$/i;
   const altHeaderRe = /^(\d+)\s*[-\u2013\u2014]?\s*(?:bob|bo['\u2019]lim)$/i;
-  // A short numbered "topic title" line with no separator on it at all,
-  // e.g. "1 Family", "2 Relationships" — a chapter heading, not a word entry
-  // (a real vocabulary line always has a translation, hence a separator).
   const topicHeaderRe = /^(\d{1,3})\s+([A-Za-z][A-Za-z'\u2019\s]{1,40})$/;
 
   const chunks = [];
@@ -1368,13 +1362,6 @@ const Extract = {
     return result.value;
   },
 
-  // pdf.js's getTextContent() returns text fragments with position data but no
-  // line breaks. Naively joining them with spaces crushes an entire page (or a
-  // whole vocabulary chapter) into one giant line, which is exactly what broke
-  // parsing before. We rebuild real lines by grouping fragments that share
-  // roughly the same vertical position, and — since many vocabulary books are
-  // laid out in two columns — split the page into a left/right column first
-  // when the fragments clearly cluster that way.
   reconstructPageText(items, pageWidth) {
     if (items.length === 0) return "";
     const xs = items.map(it => it.transform[4]);
@@ -1419,7 +1406,6 @@ const Extract = {
     const perPage = meaningfulChars / n;
     if (perPage > 25) { onProgress("Tayyor", 100); return text; }
 
-    // Looks like a scanned / image-based PDF — fall back to OCR.
     onProgress("Rasmli sahifa aniqlandi, OCR ishga tushirilmoqda...", 42);
     await this.ensureTesseract();
     const worker = await window.Tesseract.createWorker(ocrLang || "eng", 1, {

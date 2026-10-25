@@ -365,22 +365,22 @@ main{
       <div class="brand-mark"><img src="favicon.ico?v=2" alt="logo"></div>
       <div>
         <div class="brand-title">Dictionary Test App</div>
-        <div class="brand-sub">Kitobni Yuklang, O'ynab Yodlang!</div>
+        <div class="brand-sub">Kitobni Yuklang, Öynab Yodlang!</div>
       </div>
     </div>
     <div class="search-wrap hidden" id="searchWrap">
-      <input type="text" id="bookSearch" placeholder="Kitob yoki til qidirish...">
+      <input type="text" id="bookSearch" placeholder="Kitob yoki til qidiriş...">
     </div>
     <nav class="tabs hidden" id="tabs">
       <button data-tab="shelf" onclick="Nav.go('shelf')">📚 Kutubxona</button>
-      <button data-tab="upload" onclick="Nav.go('upload')">➕ Qo'shish</button>
+      <button data-tab="upload" onclick="Nav.go('upload')">➕ Qöşiş</button>
       <button data-tab="difficult" onclick="Nav.go('difficult')">⭐ Qiyin</button>
       <button data-tab="mistakes" onclick="Nav.go('mistakes')">❌ Xato</button>
     </nav>
     <div class="user-chip hidden" id="userChip">
       <span class="streak-badge" id="streakBadge" title="Kunlik streak">🔥 0</span>
       <span id="userEmail"></span>
-      <button onclick="AuthUI.logout()">Chiqish</button>
+      <button onclick="AuthUI.logout()">Çiqiş</button>
     </div>
   </header>
 
@@ -417,16 +417,16 @@ main{
   <div class="auth-wrap">
     <div class="auth-hero">
       <div class="brand-mark"><img src="favicon.ico?v=2" alt="logo"></div>
-      <h1 id="authTitle">Xush kelibsiz</h1>
-      <p>So'z boyligingizni oshiring — natijalaringiz saqlanadi</p>
+      <h1 id="authTitle">Xuş kelibsiz</h1>
+      <p>Söz boyligingizni oşiring — natijalaringiz saqlanadi</p>
     </div>
     <div class="auth-error hidden" id="authError"></div>
     <div class="field"><label>Email</label><input type="email" id="authEmail" placeholder="email@misol.com" autocomplete="email"></div>
     <div class="field"><label>Parol</label><input type="password" id="authPassword" placeholder="Kamida 6 ta belgi" autocomplete="current-password"></div>
-    <button class="btn btn-primary" id="authSubmit">Kirish</button>
+    <button class="btn btn-primary" id="authSubmit">Kiriş</button>
     <div class="auth-divider">yoki</div>
-    <button class="btn btn-ghost" id="authGoogle">Google orqali kirish</button>
-    <div class="auth-switch" id="authSwitch">Hisobingiz yo'qmi? <span id="authSwitchLink">Ro'yhatdan o'ting</span></div>
+    <button class="btn btn-ghost" id="authGoogle">Google orqali kiriş</button>
+    <div class="auth-switch" id="authSwitch">Hisobingiz yöqmi? <span id="authSwitchLink">Röyhatdan öting</span></div>
     <div class="setup-note" id="setupNote"></div>
   </div>
 </template>
@@ -620,7 +620,7 @@ async function loadVocab() {
   const raw = await res.json();
   State.vocab = raw.map((b, i) => ({
     id: b.id, title: b.title, units: b.units,
-    langFrom: "Ingliz tili", langTo: "O'zbek tili",
+    langFrom: "Ingliz tili", langTo: "Özbek tili",
     source: "static", color: colorFor(i)
   }));
 }
@@ -662,14 +662,14 @@ async function updateStreak() {
   if (State.localMode) { saveLocalStore(); return; }
   try {
     await updateDoc(doc(db, "users", State.user.uid), { streak: State.streak });
-  } catch (e) { console.error("Streak saqlashda xato:", e); }
+  } catch (e) { console.error("Streak saqlaşda xato:", e); }
 }
 
 function renderStreakBadge(animate) {
   const el = document.getElementById("streakBadge");
   if (!el) return;
   el.textContent = `🔥 ${State.streak.count}`;
-  el.title = State.streak.count > 0 ? `${State.streak.count} kunlik ketma-ketlik!` : "Bugun test ishlab, streak boshlang!";
+  el.title = State.streak.count > 0 ? `${State.streak.count} kunlik ketma-ketlik!` : "Bugun test işlab, streak boşlang!";
   if (animate) {
     el.classList.remove("bump");
     void el.offsetWidth; // restart animation
@@ -714,7 +714,7 @@ async function recordProgress(bookId, unitNum, score, total) {
   if (State.localMode) { saveLocalStore(); return; }
   try {
     await updateDoc(doc(db, "users", State.user.uid), { [`progress.${k}`]: entry });
-  } catch (e) { console.error("Natijani saqlashda xato:", e); }
+  } catch (e) { console.error("Natijani saqlaşda xato:", e); }
 }
 
 function lbKeyFor(book) {
@@ -731,7 +731,7 @@ async function updateLeaderboard(book) {
     await setDoc(doc(db, "leaderboards", lbKeyFor(book), "entries", State.user.uid), {
       name, score, total, at: serverTimestamp()
     });
-  } catch (e) { console.error("Reytingni yangilashda xato:", e); }
+  } catch (e) { console.error("Reytingni yangilaşda xato:", e); }
 }
 
 async function fetchLeaderboard(book) {
@@ -741,7 +741,7 @@ async function fetchLeaderboard(book) {
     const rows = snap.docs.map(d => d.data());
     rows.sort((a, b) => (b.score || 0) - (a.score || 0));
     return rows;
-  } catch (e) { console.error("Reytingni yuklashda xato:", e); return []; }
+  } catch (e) { console.error("Reytingni yuklaşda xato:", e); return []; }
 }
 
 // --------------------------------------------------------------------------
@@ -771,7 +771,7 @@ async function fetchDynamicBooks() {
     const pubBooks = pubSnap.docs.map(d => ({ id: d.id, ...d.data(), units: null, source: "public" }));
     pubBooks.sort((a, b) => (b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0) - (a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0));
     pubBooks.forEach((b, i) => results.push({ ...b, color: colorFor(results.length + 6) }));
-  } catch (e) { console.error("Ommaviy kitoblarni yuklashda xato:", e); }
+  } catch (e) { console.error("Ommaviy kitoblarni yuklaşda xato:", e); }
   if (myEmail) {
     try {
       const grpSnap = await getDocs(query(collection(db, "books"), where("allowedEmails", "array-contains", myEmail)));
@@ -780,7 +780,7 @@ async function fetchDynamicBooks() {
         if (data.visibility !== "group") return; // allowedEmails is also present on the owner's own doc metadata for public books they made group-eligible; keep this filter defensive
         results.push({ id: d.id, ...data, units: null, source: "group", color: colorFor(results.length + 6) });
       });
-    } catch (e) { console.error("Guruh kitoblarini yuklashda xato:", e); }
+    } catch (e) { console.error("Guruh kitoblarini yuklaşda xato:", e); }
   }
   if (State.user && State.user.uid) {
     try {
@@ -789,7 +789,7 @@ async function fetchDynamicBooks() {
         const data = d.data();
         results.push({ id: d.id, ...data, units: null, source: "personal", color: colorFor(results.length + 6) });
       });
-    } catch (e) { console.error("Shaxsiy kitoblarni yuklashda xato:", e); }
+    } catch (e) { console.error("Şaxsiy kitoblarni yuklaşda xato:", e); }
   }
   return results;
 }
@@ -902,8 +902,8 @@ const AuthUI = {
 
     if (CONFIG_IS_PLACEHOLDER) {
       document.getElementById("setupNote").innerHTML =
-        "⚠️ Firebase sozlanmagan. <code>index.html</code> ichidagi <code>firebaseConfig</code> qiymatini " +
-        "o'zingizning Firebase loyihangiz ma'lumotlariga almashtiring (README.md). Hozircha kirish ishlamaydi.";
+        "⚠️ Firebase sozlanmagan. <code>index.html</code> içidagi <code>firebaseConfig</code> qiymatini " +
+        "özingizning Firebase loyihangiz ma'lumotlariga almaştiring (README.md). Hozirça kiriş işlamaydi.";
     }
     this.applyMode();
     document.getElementById("authSubmit").onclick = () => this.submit();
@@ -915,12 +915,12 @@ const AuthUI = {
     const submitBtn = document.getElementById("authSubmit");
     const switchText = document.getElementById("authSwitch");
     if (this.mode === "login") {
-      title.textContent = "Xush kelibsiz";
-      submitBtn.textContent = "Kirish";
-      switchText.innerHTML = 'Hisobingiz yo\'qmi? <span id="authSwitchLink">Ro\'yhatdan o\'ting</span>';
+      title.textContent = "Xuş kelibsiz";
+      submitBtn.textContent = "Kiriş";
+      switchText.innerHTML = 'Hisobingiz yöqmi? <span id="authSwitchLink">Röyhatdan öting</span>';
     } else {
-      title.textContent = "Ro'yhatdan o'tish";
-      submitBtn.textContent = "Ro'yhatdan o'tish";
+      title.textContent = "Röyhatdan ötiş";
+      submitBtn.textContent = "Röyhatdan ötiş";
       switchText.innerHTML = 'Hisobingiz bormi? <span id="authSwitchLink">Kiring</span>';
     }
     document.getElementById("authSwitchLink").onclick = () => { this.mode = this.mode === "login" ? "register" : "login"; this.applyMode(); };
@@ -944,12 +944,12 @@ const AuthUI = {
   friendlyError(e) {
     const code = e && e.code ? e.code : "";
     const map = {
-      "auth/invalid-email": "Email noto'g'ri formatda.",
-      "auth/user-not-found": "Bunday foydalanuvchi topilmadi.",
-      "auth/wrong-password": "Parol noto'g'ri.",
-      "auth/email-already-in-use": "Bu email allaqachon ro'yhatdan o'tgan.",
-      "auth/weak-password": "Parol kamida 6 ta belgidan iborat bo'lishi kerak.",
-      "auth/invalid-credential": "Email yoki parol noto'g'ri.",
+      "auth/invalid-email": "Email notöğri formatda.",
+      "auth/user-not-found": "Bunday foydalanuvçi topilmadi.",
+      "auth/wrong-password": "Parol notöğri.",
+      "auth/email-already-in-use": "Bu email allaqaçon röyhatdan ötgan.",
+      "auth/weak-password": "Parol kamida 6 ta belgidan iborat bölişi kerak.",
+      "auth/invalid-credential": "Email yoki parol notöğri.",
       "auth/network-request-failed": "Internet aloqasi bilan muammo."
     };
     return map[code] || ("Xatolik yuz berdi: " + (e.message || code));
@@ -1026,7 +1026,7 @@ const Views = {
     if (books.length === 0) {
       main.innerHTML = `
         <div class="section-head"><h1>Kutubxona</h1></div>
-        <div class="no-results">🔎 "${escapeHtml(State.shelfQuery)}" bo'yicha hech narsa topilmadi.</div>
+        <div class="no-results">🔎 "${escapeHtml(State.shelfQuery)}" böyiça heç narsa topilmadi.</div>
       `;
       return;
     }
@@ -1034,8 +1034,8 @@ const Views = {
     const groupHtml = order.map(key => {
       const groupBooks = groups[key];
       const spines = groupBooks.map(book => {
-        const owner = book.source === "personal" ? `<span class="owner-badge" title="Faqat sizga ko'rinadi">🔒</span>`
-          : book.source === "group" ? `<span class="owner-badge" title="Faqat guruh a'zolariga ko'rinadi">👥</span>` : "";
+        const owner = book.source === "personal" ? `<span class="owner-badge" title="Faqat sizga körinadi">🔒</span>`
+          : book.source === "group" ? `<span class="owner-badge" title="Faqat guruh a'zolariga körinadi">👥</span>` : "";
         const pct = bookProgressPercent(book);
         return `<div class="spine" style="--bc:${book.color}" data-book="${book.id}" data-source="${book.source}">
           ${owner}
@@ -1058,7 +1058,7 @@ const Views = {
 
     main.innerHTML = `
       <div class="section-head"><h1>Kutubxona</h1><span class="hint">${books.length} ta kitob</span></div>
-      <p class="shelf-intro">Kitobni tanlang, keyin bobni oching. Har bir bobda so'zlarni ko'ring, yodlang, so'ng test bilan tekshirib ko'ring. O'zingiz istagan tilda yangi kitob qo'shishingiz ham mumkin.</p>
+      <p class="shelf-intro">Kitobni tanlang, keyin bobni oçing. Har bir bobda sözlarni köring, yodlang, söng test bilan tekşirib köring. Özingiz istagan tilda yangi kitob qöşişingiz ham mumkin.</p>
       ${groupHtml}
     `;
     main.querySelectorAll(".spine").forEach(el => {
@@ -1073,7 +1073,7 @@ const Views = {
     try {
       await loadBookUnits(book);
     } catch (e) {
-      main.innerHTML = `<div class="loader">Bobni yuklashda xato yuz berdi.</div>`;
+      main.innerHTML = `<div class="loader">Bobni yuklaşda xato yuz berdi.</div>`;
       return;
     }
     if (State.route.name !== "book") return; // navigated away while loading
@@ -1103,8 +1103,8 @@ const Views = {
       ${this.crumbs([{ label: "Kutubxona" }, { label: book.title }])}
       <div class="section-head"><h1>${escapeHtml(book.title)}</h1><span class="hint">${units.length} bob · ${book.langFrom} → ${book.langTo}</span></div>
       ${units.length ? `<div class="book-progress-row"><div class="book-progress-bar"><div class="book-progress-fill" style="width:${pct}%"></div></div><span>${pct}% tugallangan</span>${showLeaderboard ? `<button class="btn-leaderboard" id="lbBtn">🏆 Reyting</button>` : ""}</div>` : ""}
-      ${units.length ? `<div class="units-grid">${tiles}</div>` : `<div class="no-results">Bu kitobda hali bob yo'q.</div>`}
-      ${canDelete ? `<div style="margin-top:22px;"><button class="btn btn-ghost" id="deleteBookBtn" style="width:auto;color:var(--bad);">🗑 Kitobni o'chirish</button></div>` : ""}
+      ${units.length ? `<div class="units-grid">${tiles}</div>` : `<div class="no-results">Bu kitobda hali bob yöq.</div>`}
+      ${canDelete ? `<div style="margin-top:22px;"><button class="btn btn-ghost" id="deleteBookBtn" style="width:auto;color:var(--bad);">🗑 Kitobni öçiriş</button></div>` : ""}
     `;
     main.querySelector('[data-crumb="0"]').onclick = () => Nav.go("shelf");
     main.querySelectorAll(".unit-tile").forEach(el => {
@@ -1114,10 +1114,10 @@ const Views = {
     if (lbBtn) lbBtn.onclick = () => Nav.go("leaderboard", { bookId: book.id, bookSource: book.source });
     const delBtn = document.getElementById("deleteBookBtn");
     if (delBtn) delBtn.onclick = async () => {
-      if (!confirm(`"${book.title}" kitobini butunlay o'chirasizmi? Bu amalni orqaga qaytarib bo'lmaydi.`)) return;
+      if (!confirm(`"${book.title}" kitobini butunlay öçirasizmi? Bu amalni orqaga qaytarib bölmaydi.`)) return;
       await deleteBook(book);
       State.vocab = State.vocab.filter(b => !(String(b.id) === String(book.id) && b.source === book.source));
-      toast("Kitob o'chirildi");
+      toast("Kitob öçirildi");
       Nav.go("shelf");
     };
   },
@@ -1131,7 +1131,7 @@ const Views = {
     main.innerHTML = `
       ${this.crumbs([{ label: "Kutubxona" }, { label: book.title, dataCrumb: "1" }, { label: "🏆 Reyting" }])}
       <div class="section-head"><h1>🏆 Reyting</h1><span class="hint">${escapeHtml(book.title)}</span></div>
-      ${rows.length === 0 ? `<div class="empty-state"><div class="big">🏆</div>Hali hech kim bu kitobda test ishlamagan.<br>Birinchi bo'lib test ishlab, reytingni boshlang!</div>` : `
+      ${rows.length === 0 ? `<div class="empty-state"><div class="big">🏆</div>Hali heç kim bu kitobda test işlamagan.<br>Birinçi bölib test işlab, reytingni boşlang!</div>` : `
       <div class="saved-list">
         ${rows.map((r, i) => {
           const rankCls = i === 0 ? "top1" : i === 1 ? "top2" : i === 2 ? "top3" : "";
@@ -1140,7 +1140,7 @@ const Views = {
           const pct = r.total ? Math.round(100 * r.score / r.total) : 0;
           return `<div class="lb-row ${rankCls} ${mine}">
             <span class="lb-rank">${medal}</span>
-            <span class="lb-name">${escapeHtml(r.name || "foydalanuvchi")}${mine ? " (siz)" : ""}</span>
+            <span class="lb-name">${escapeHtml(r.name || "foydalanuvçi")}${mine ? " (siz)" : ""}</span>
             <span class="lb-score">${r.score}/${r.total} · ${pct}%</span>
           </div>`;
         }).join("")}
@@ -1170,7 +1170,7 @@ const Views = {
       return `<div class="word-row" data-en="${escapeAttr(w.en)}">
         <span class="word-en">${escapeHtml(w.en)}</span>
         <span class="word-uz">${escapeHtml(w.uz)}</span>
-        <button class="star-btn ${active ? "active" : ""}" data-star="${escapeAttr(w.en)}" title="Qiyin so'zlarga qo'shish">${active ? "★" : "☆"}</button>
+        <button class="star-btn ${active ? "active" : ""}" data-star="${escapeAttr(w.en)}" title="Qiyin sözlarga qöşiş">${active ? "★" : "☆"}</button>
       </div>`;
     }).join("");
 
@@ -1181,9 +1181,9 @@ const Views = {
           <button data-dir="a2b" class="${this.unitDirection === "a2b" ? "active" : ""}">${escapeHtml(labelA)} → ${escapeHtml(labelB)}</button>
           <button data-dir="b2a" class="${this.unitDirection === "b2a" ? "active" : ""}">${escapeHtml(labelB)} → ${escapeHtml(labelA)}</button>
         </div>
-        <button class="btn-test" id="startTestBtn">📝 Test ishlash (${unit.words.length} savol)</button>
+        <button class="btn-test" id="startTestBtn">📝 Test işlaş (${unit.words.length} savol)</button>
       </div>
-      <div class="section-head"><h1>${escapeHtml(unitLabel(unit))}</h1><span class="hint">So'zga bosing — tarjimasi ochiladi</span></div>
+      <div class="section-head"><h1>${escapeHtml(unitLabel(unit))}</h1><span class="hint">Sözga bosing — tarjimasi oçiladi</span></div>
       <div class="word-list">${rows}</div>
     `;
     main.querySelectorAll('[data-crumb]').forEach(el => {
@@ -1206,10 +1206,10 @@ const Views = {
           const active = !!State.difficult[keyFor(book.id, unitNum, w.en)];
           btn.classList.toggle("active", active);
           btn.textContent = active ? "★" : "☆";
-          toast(active ? "Qiyin so'zlarga qo'shildi" : "Ro'yxatdan olib tashlandi");
+          toast(active ? "Qiyin sözlarga qöşildi" : "Röyxatdan olib taşlandi");
         } catch (err) {
-          console.error("Saqlashda xato:", err);
-          toast("Saqlab bo'lmadi — internetni tekshiring");
+          console.error("Saqlaşda xato:", err);
+          toast("Saqlab bölmadi — internetni tekşiring");
         }
       });
     });
@@ -1238,8 +1238,8 @@ const Views = {
           ${question.options.map((opt, i) => `<div class="q-option" data-i="${i}"><span class="kbd">${i + 1}</span>${escapeHtml(opt)}</div>`).join("")}
         </div>
         <div class="quiz-next hidden" id="quizNextWrap"><button class="btn btn-primary" id="quizNextBtn" style="width:auto;padding:11px 28px;">Keyingisi →</button></div>
-        <div class="quiz-exit"><button id="quizExitBtn">Testni tugatish</button></div>
-        <div class="kbd-hint">Klaviatura: <kbd>1</kbd>-<kbd>4</kbd> tanlash · <kbd>Enter</kbd> keyingisi</div>
+        <div class="quiz-exit"><button id="quizExitBtn">Testni tugatiş</button></div>
+        <div class="kbd-hint">Klaviatura: <kbd>1</kbd>-<kbd>4</kbd> tanlaş · <kbd>Enter</kbd> keyingisi</div>
       </div>
     `;
 
@@ -1262,7 +1262,7 @@ const Views = {
             });
             question.wrong = true;
             try { await recordMistake(q.book.id, q.unit.unit, question.word.en, question.word.uz); }
-            catch (e) { console.error("Xatoni saqlashda muammo (internet aloqasini tekshiring):", e); }
+            catch (e) { console.error("Xatoni saqlaşda muammo (internet aloqasini tekşiring):", e); }
           }
           if (isCorrect) q.score++;
         } finally {
@@ -1283,7 +1283,7 @@ const Views = {
       }
     };
     document.getElementById("quizExitBtn").onclick = () => {
-      if (confirm("Testni to'xtatib, bobga qaytasizmi?")) Nav.go("unit", { bookId: q.book.id, bookSource: q.book.source, unitNum: q.unit.unit });
+      if (confirm("Testni töxtatib, bobga qaytasizmi?")) Nav.go("unit", { bookId: q.book.id, bookSource: q.book.source, unitNum: q.unit.unit });
     };
   },
 
@@ -1292,25 +1292,25 @@ const Views = {
     const missed = q.questions.filter(x => x.wrong);
     const isRecord = q.prevBest != null && q.score > q.prevBest;
     const phrases = [
-      "Ajoyib ish!", "Zo'r natija!", "Davom eting!", "Siz kuchaymoqdasiz!",
-      "Bu juda yaxshi!", "So'zlar sizga bo'ysunmoqda!"
+      "Ajoyib iş!", "Zör natija!", "Davom eting!", "Siz kuçaymoqdasiz!",
+      "Bu juda yaxşi!", "Sözlar sizga böysunmoqda!"
     ];
     const phrase = phrases[Math.floor(Math.random() * phrases.length)];
     main.innerHTML = `
       <div class="result-wrap">
         <div class="chest-stage" id="chestStage">
           <div class="chest" id="chestEl">🎁</div>
-          <div class="chest-prompt">Sandiqni ochish uchun bosing!</div>
+          <div class="chest-prompt">Sandiqni oçiş uçun bosing!</div>
         </div>
         <div class="result-reveal hidden" id="resultReveal">
           <div style="color:var(--muted);font-size:13px;">${escapeHtml(q.book.title)} · ${escapeHtml(unitLabel(q.unit))} natijasi</div>
           <div class="result-score">${q.score}/${q.questions.length}</div>
           ${isRecord ? `<div class="record-badge">🆕 Yangi rekord!</div>` : ""}
-          <div class="result-label">${missed.length === 0 ? "Barakalla! " + phrase + " Barcha savollarga to'g'ri javob berdingiz." : phrase + " " + missed.length + " ta so'zda xato qildingiz — ular \"Xatolarim\" ro'yxatiga saqlandi."}</div>
-          ${missed.length ? `<div class="result-list"><h4>Xato qilingan so'zlar</h4>${missed.map(m => `<div class="result-row"><span class="r-en">${escapeHtml(m.word.en)}</span><span class="r-correct">${escapeHtml(m.word.uz)}</span></div>`).join("")}</div>` : ""}
+          <div class="result-label">${missed.length === 0 ? "Barakalla! " + phrase + " Barça savollarga töğri javob berdingiz." : phrase + " " + missed.length + " ta sözda xato qildingiz — ular \"Xatolarim\" röyxatiga saqlandi."}</div>
+          ${missed.length ? `<div class="result-list"><h4>Xato qilingan sözlar</h4>${missed.map(m => `<div class="result-row"><span class="r-en">${escapeHtml(m.word.en)}</span><span class="r-correct">${escapeHtml(m.word.uz)}</span></div>`).join("")}</div>` : ""}
           <div class="result-actions">
-            <button class="btn btn-ghost" id="backUnitBtn">← Bobga qaytish</button>
-            <button class="btn btn-primary" id="retryBtn">Qayta test ishlash</button>
+            <button class="btn btn-ghost" id="backUnitBtn">← Bobga qaytiş</button>
+            <button class="btn btn-primary" id="retryBtn">Qayta test işlaş</button>
           </div>
         </div>
       </div>
@@ -1334,11 +1334,11 @@ const Views = {
   difficult(main) {
     const items = Object.entries(State.difficult).sort((a, b) => String(a[1].book).localeCompare(String(b[1].book)) || a[1].unit - b[1].unit);
     if (items.length === 0) {
-      main.innerHTML = `<div class="section-head"><h1>Qiyin so'zlar</h1></div><div class="empty-state"><div class="big">⭐</div>Hali hech qanday so'z saqlanmagan.<br>Bob ichida so'z yonidagi yulduzchani bosing.</div>`;
+      main.innerHTML = `<div class="section-head"><h1>Qiyin sözlar</h1></div><div class="empty-state"><div class="big">⭐</div>Hali heç qanday söz saqlanmagan.<br>Bob içida söz yonidagi yulduzçani bosing.</div>`;
       return;
     }
     main.innerHTML = `
-      <div class="section-head"><h1>Qiyin so'zlar</h1><span class="hint">${items.length} ta so'z</span></div>
+      <div class="section-head"><h1>Qiyin sözlar</h1><span class="hint">${items.length} ta söz</span></div>
       <div class="saved-list">${items.map(([k, w]) => `
         <div class="saved-row" data-k="${k}">
           <div class="saved-top">
@@ -1350,18 +1350,18 @@ const Views = {
         </div>`).join("")}</div>
     `;
     main.querySelectorAll("[data-remove]").forEach(btn => {
-      btn.onclick = async () => { await removeDifficult(btn.dataset.remove); this.difficult(main); toast("Ro'yxatdan olib tashlandi"); };
+      btn.onclick = async () => { await removeDifficult(btn.dataset.remove); this.difficult(main); toast("Röyxatdan olib taşlandi"); };
     });
   },
 
   mistakes(main) {
     const items = Object.entries(State.mistakes).sort((a, b) => (b[1].count || 1) - (a[1].count || 1));
     if (items.length === 0) {
-      main.innerHTML = `<div class="section-head"><h1>Xatolarim</h1></div><div class="empty-state"><div class="big">❌</div>Hali xato qilingan so'zlar yo'q.<br>Test ishlaganingizda xato qilgan so'zlaringiz shu yerda saqlanadi.</div>`;
+      main.innerHTML = `<div class="section-head"><h1>Xatolarim</h1></div><div class="empty-state"><div class="big">❌</div>Hali xato qilingan sözlar yöq.<br>Test işlaganingizda xato qilgan sözlaringiz şu yerda saqlanadi.</div>`;
       return;
     }
     main.innerHTML = `
-      <div class="section-head"><h1>Xatolarim</h1><span class="hint">${items.length} ta so'z</span></div>
+      <div class="section-head"><h1>Xatolarim</h1><span class="hint">${items.length} ta söz</span></div>
       <div class="saved-list">${items.map(([k, w]) => `
         <div class="saved-row" data-k="${k}">
           <div class="saved-top">
@@ -1374,7 +1374,7 @@ const Views = {
         </div>`).join("")}</div>
     `;
     main.querySelectorAll("[data-remove]").forEach(btn => {
-      btn.onclick = async () => { await removeMistake(btn.dataset.remove); this.mistakes(main); toast("Ro'yxatdan olib tashlandi"); };
+      btn.onclick = async () => { await removeMistake(btn.dataset.remove); this.mistakes(main); toast("Röyxatdan olib taşlandi"); };
     });
   }
 };
@@ -1577,7 +1577,7 @@ const Extract = {
   },
 
   async fromDocx(file, onProgress) {
-    onProgress("Word fayl o'qilmoqda...", 20);
+    onProgress("Word fayl öqilmoqda...", 20);
     await this.ensureMammoth();
     const arrayBuffer = await file.arrayBuffer();
     const result = await window.mammoth.extractRawText({ arrayBuffer });
@@ -1611,7 +1611,7 @@ const Extract = {
   },
 
   async fromPdf(file, ocrLang, onProgress) {
-    onProgress("PDF ochilmoqda...", 5);
+    onProgress("PDF oçilmoqda...", 5);
     await this.ensurePdfJs();
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -1622,20 +1622,20 @@ const Extract = {
       const content = await page.getTextContent();
       const viewport = page.getViewport({ scale: 1 });
       text += this.reconstructPageText(content.items, viewport.width) + "\n";
-      onProgress(`Matn chiqarilmoqda: sahifa ${i}/${n}`, 5 + Math.round((i / n) * 35));
+      onProgress(`Matn çiqarilmoqda: sahifa ${i}/${n}`, 5 + Math.round((i / n) * 35));
     }
 
     const meaningfulChars = text.replace(/\s/g, "").length;
     const perPage = meaningfulChars / n;
     if (perPage > 25) { onProgress("Tayyor", 100); return text; }
 
-    onProgress("Rasmli sahifa aniqlandi, OCR ishga tushirilmoqda...", 42);
+    onProgress("Rasmli sahifa aniqlandi, OCR işga tuşirilmoqda...", 42);
     await this.ensureTesseract();
     const worker = await window.Tesseract.createWorker(ocrLang || "eng", 1, {
       logger: (m) => {
         if (m.status === "recognizing text") {
           const pct = 45 + Math.round(m.progress * 50);
-          onProgress(`OCR bilan o'qilmoqda... (${Math.round(m.progress * 100)}%)`, pct);
+          onProgress(`OCR bilan öqilmoqda... (${Math.round(m.progress * 100)}%)`, pct);
         }
       }
     });
@@ -1660,7 +1660,7 @@ const Extract = {
     const name = file.name.toLowerCase();
     if (name.endsWith(".docx")) return this.fromDocx(file, onProgress);
     if (name.endsWith(".pdf")) return this.fromPdf(file, ocrLang, onProgress);
-    throw new Error("Faqat .pdf yoki .docx fayllar qo'llab-quvvatlanadi.");
+    throw new Error("Faqat .pdf yoki .docx fayllar qöllab-quvvatlanadi.");
   }
 };
 
@@ -1683,8 +1683,8 @@ const Upload = {
     const s = State.upload;
     const stepsHtml = [1, 2, 3].map(n => `<div class="ws ${s.step >= n ? "done" : ""}"></div>`).join("");
     main.innerHTML = `
-      ${Views.crumbs([{ label: "Kutubxona" }, { label: "Yangi kitob qo'shish" }])}
-      <div class="section-head"><h1>Yangi kitob qo'shish</h1></div>
+      ${Views.crumbs([{ label: "Kutubxona" }, { label: "Yangi kitob qöşiş" }])}
+      <div class="section-head"><h1>Yangi kitob qöşiş</h1></div>
       <div class="wizard-steps">${stepsHtml}</div>
       <div id="wizardBody"></div>
     `;
@@ -1707,32 +1707,32 @@ const Upload = {
     const s = State.upload;
     const body = document.getElementById("wizardBody");
     const demoNote = !firebaseReady
-      ? `<div class="summary-box">🔧 Demo rejimda ushbu kitob faqat shu brauzerda saqlanadi (Firebase sozlanmagan).</div>`
+      ? `<div class="summary-box">🔧 Demo rejimda uşbu kitob faqat şu brauzerda saqlanadi (Firebase sozlanmagan).</div>`
       : "";
     body.innerHTML = `
       <div class="wizard-card">
         <h3>1-qadam: Fayl va ma'lumotlar</h3>
-        <div class="wc-hint">Rasmli (skanerlangan) PDF, matnli PDF yoki DOCX faylni yuklashingiz mumkin.</div>
+        <div class="wc-hint">Rasmli (skanerlangan) PDF, matnli PDF yoki DOCX faylni yuklaşingiz mumkin.</div>
         ${demoNote}
-        <div class="field"><label>Kitob nomi</label><input type="text" id="upTitle" placeholder="Masalan: 1000 Rus tili so'zlari" value="${escapeAttr(s.title)}"></div>
+        <div class="field"><label>Kitob nomi</label><input type="text" id="upTitle" placeholder="Masalan: 1000 Rus tili sözlari" value="${escapeAttr(s.title)}"></div>
         <div class="field-row">
           <div class="field"><label>Tildan</label><input type="text" id="upLangFrom" placeholder="Masalan: Ingliz tili" value="${escapeAttr(s.langFrom)}"></div>
           <div class="field"><label>Tilga</label><input type="text" id="upLangTo" placeholder="Masalan: Rus tili" value="${escapeAttr(s.langTo)}"></div>
         </div>
         <div class="field">
-          <label>Kimlarga ko'rinsin?</label>
+          <label>Kimlarga körinsin?</label>
           <div class="radio-row">
             <div class="radio-opt ${s.visibility === "public" ? "active" : ""}" data-vis="public">
               <div class="ro-title">Hammaga<span class="recommend-tag">tavsiya etiladi</span></div>
-              <div class="ro-sub">Saytdagi barcha foydalanuvchilar ko'radi va foydalanadi</div>
+              <div class="ro-sub">Saytdagi barça foydalanuvçilar köradi va foydalanadi</div>
             </div>
             <div class="radio-opt ${s.visibility === "group" ? "active" : ""}" data-vis="group">
               <div class="ro-title">Guruhga</div>
-              <div class="ro-sub">Faqat siz kiritgan email egalari ko'radi (masalan o'quvchilaringiz)</div>
+              <div class="ro-sub">Faqat siz kiritgan email egalari köradi (masalan öquvçilaringiz)</div>
             </div>
             <div class="radio-opt ${s.visibility === "private" ? "active" : ""}" data-vis="private">
               <div class="ro-title">Faqat menga</div>
-              <div class="ro-sub">Shaxsiy ro'yxatingizda, boshqalarga ko'rinmaydi</div>
+              <div class="ro-sub">Şaxsiy röyxatingizda, boşqalarga körinmaydi</div>
             </div>
           </div>
         </div>
@@ -1740,18 +1740,18 @@ const Upload = {
         <div class="field">
           <label>Guruh a'zolarining email manzillari (har birini yangi qatorga yoki vergul bilan yozing)</label>
           <textarea id="upGroupEmails" rows="4" style="width:100%;padding:11px 13px;border-radius:10px;border:1px solid var(--line);background:var(--bg-soft);color:var(--text);font-size:13.5px;font-family:'Courier New',monospace;resize:vertical;" placeholder="ali@misol.com&#10;vali@misol.com">${escapeHtml(s.groupEmails)}</textarea>
-          <div class="subhint">Ko'rsatilgan emaillar bilan ro'yhatdan o'tgan foydalanuvchilargina bu kitobni ko'ra oladi. Siz o'zingiz ham avtomatik qo'shilasiz.</div>
+          <div class="subhint">Körsatilgan emaillar bilan röyhatdan ötgan foydalanuvçilargina bu kitobni köra oladi. Siz özingiz ham avtomatik qöşilasiz.</div>
         </div>` : ""}
-        <div class="field"><label>Bobda nechta so'z (kitobda bob belgisi topilmasa shu son bo'yicha bo'linadi)</label><input type="number" id="upWordsPerUnit" value="${s.wordsPerUnit}" min="5" max="60"></div>
+        <div class="field"><label>Bobda neçta söz (kitobda bob belgisi topilmasa şu son böyiça bölinadi)</label><input type="number" id="upWordsPerUnit" value="${s.wordsPerUnit}" min="5" max="60"></div>
         <div class="field"><label>Fayl (.pdf yoki .docx)</label><input type="file" id="upFile" accept=".pdf,.docx"></div>
         <div class="field" id="ocrLangField">
-          <label>Agar fayl rasmli (skanerlangan) bo'lsa, OCR tili</label>
+          <label>Agar fayl rasmli (skanerlangan) bölsa, OCR tili</label>
           <select id="upOcrLang">
-            <option value="eng" ${s.ocrLang === "eng" ? "selected" : ""}>Inglizcha</option>
-            <option value="uzb" ${s.ocrLang === "uzb" ? "selected" : ""}>O'zbekcha (lotin)</option>
-            <option value="rus" ${s.ocrLang === "rus" ? "selected" : ""}>Ruscha</option>
-            <option value="tur" ${s.ocrLang === "tur" ? "selected" : ""}>Turkcha</option>
-            <option value="eng+uzb" ${s.ocrLang === "eng+uzb" ? "selected" : ""}>Inglizcha + O'zbekcha</option>
+            <option value="eng" ${s.ocrLang === "eng" ? "selected" : ""}>Inglizça</option>
+            <option value="uzb" ${s.ocrLang === "uzb" ? "selected" : ""}>Özbekça (lotin)</option>
+            <option value="rus" ${s.ocrLang === "rus" ? "selected" : ""}>Rusça</option>
+            <option value="tur" ${s.ocrLang === "tur" ? "selected" : ""}>Turkça</option>
+            <option value="eng+uzb" ${s.ocrLang === "eng+uzb" ? "selected" : ""}>Inglizça + Özbekça</option>
           </select>
         </div>
         <div id="busyBox" class="progress-box hidden">
@@ -1759,7 +1759,7 @@ const Upload = {
           <div class="pb-bar"><div class="pb-fill" style="width:0%"></div></div>
         </div>
         <div class="wizard-actions">
-          <button class="btn btn-primary" id="extractBtn">Matnni chiqarish →</button>
+          <button class="btn btn-primary" id="extractBtn">Matnni çiqariş →</button>
         </div>
       </div>
     `;
@@ -1795,7 +1795,7 @@ const Upload = {
       Upload.render(document.getElementById("main"));
     } catch (e) {
       console.error(e);
-      toast("Xatolik: " + (e.message || "matnni chiqarib bo'lmadi"));
+      toast("Xatolik: " + (e.message || "matnni çiqarib bölmadi"));
       document.getElementById("extractBtn").disabled = false;
     }
   },
@@ -1805,12 +1805,12 @@ const Upload = {
     const body = document.getElementById("wizardBody");
     body.innerHTML = `
       <div class="wizard-card">
-        <h3>2-qadam: Matnni tozalash</h3>
-        <div class="wc-hint">Chiqarilgan matnni ko'rib chiqing — sahifa raqamlari, keraksiz qatorlarni o'chiring, OCR xatolarini tuzating. Har bir so'z qatori <code>so'z - tarjima</code> ko'rinishida bo'lishi kerak.</div>
+        <h3>2-qadam: Matnni tozalaş</h3>
+        <div class="wc-hint">Çiqarilgan matnni körib çiqing — sahifa raqamlari, keraksiz qatorlarni öçiring, OCR xatolarini tuzating. Har bir söz qatori <code>söz - tarjima</code> körinişida bölişi kerak.</div>
         <textarea class="raw-textarea" id="rawTextArea">${escapeHtml(s.rawText)}</textarea>
         <div class="wizard-actions">
           <button class="btn btn-ghost" id="backTo1">← Ortga</button>
-          <button class="btn btn-primary" id="toStep3">Boblarga ajratish →</button>
+          <button class="btn btn-primary" id="toStep3">Boblarga ajratiş →</button>
         </div>
       </div>
     `;
@@ -1819,7 +1819,7 @@ const Upload = {
     document.getElementById("toStep3").onclick = () => {
       const parsed = parseRawText(s.rawText, s.wordsPerUnit);
       if (parsed.length === 0 || parsed.every(u => u.words.length === 0)) {
-        toast("Hech qanday so'z topilmadi. Matn formatini tekshiring.");
+        toast("Heç qanday söz topilmadi. Matn formatini tekşiring.");
         return;
       }
       s.units = parsed;
@@ -1836,8 +1836,8 @@ const Upload = {
       <div class="unit-edit-card" data-idx="${i}">
         <div class="unit-edit-head" data-toggle="${i}">
           <span class="uh-title">${escapeHtml(unitLabel(u))}</span>
-          <span class="uh-count">${u.words.length} so'z</span>
-          <button class="uh-del" data-deleteunit="${i}" title="Bobni o'chirish">✕</button>
+          <span class="uh-count">${u.words.length} söz</span>
+          <button class="uh-del" data-deleteunit="${i}" title="Bobni öçiriş">✕</button>
         </div>
         <div class="unit-edit-body hidden" id="ub-${i}">
           <textarea data-unittext="${i}">${escapeHtml(unitToText(u))}</textarea>
@@ -1846,12 +1846,12 @@ const Upload = {
     `).join("");
     body.innerHTML = `
       <div class="wizard-card" style="max-width:720px;">
-        <h3>3-qadam: Boblarni ko'rib chiqish</h3>
-        <div class="summary-box">${s.units.length} ta bob aniqlandi, jami <b>${totalWords}</b> ta so'z. Har bir bobni ochib, tekshiring va kerak bo'lsa tuzating.</div>
+        <h3>3-qadam: Boblarni körib çiqiş</h3>
+        <div class="summary-box">${s.units.length} ta bob aniqlandi, jami <b>${totalWords}</b> ta söz. Har bir bobni oçib, tekşiring va kerak bölsa tuzating.</div>
         ${cards}
         <div class="wizard-actions">
           <button class="btn btn-ghost" id="backTo2">← Ortga</button>
-          <button class="btn btn-primary" id="saveBookBtn">✅ Kitobni saqlash</button>
+          <button class="btn btn-primary" id="saveBookBtn">✅ Kitobni saqlaş</button>
         </div>
       </div>
     `;
@@ -1886,7 +1886,7 @@ const Upload = {
       return { unit: i + 1, title: u.title || null, words: textToWords(text) };
     }).filter(u => u.words.length > 0);
 
-    if (finalUnits.length === 0) return toast("Saqlash uchun so'z topilmadi.");
+    if (finalUnits.length === 0) return toast("Saqlaş uçun söz topilmadi.");
 
     const btn = document.getElementById("saveBookBtn");
     btn.disabled = true; btn.textContent = "Saqlanmoqda...";
@@ -1909,8 +1909,8 @@ const Upload = {
       Nav.go("shelf");
     } catch (e) {
       console.error(e);
-      toast("Saqlashda xato: " + (e.message || ""));
-      btn.disabled = false; btn.textContent = "✅ Kitobni saqlash";
+      toast("Saqlaşda xato: " + (e.message || ""));
+      btn.disabled = false; btn.textContent = "✅ Kitobni saqlaş";
     }
   }
 };
@@ -1931,7 +1931,7 @@ document.getElementById("bookSearch").addEventListener("input", (e) => {
 function showDemoBanner() {
   const bar = document.createElement("div");
   bar.style.cssText = "background:rgba(232,163,61,0.12);border-bottom:1px solid rgba(232,163,61,0.35);color:#f4c569;font-size:12.5px;text-align:center;padding:8px 14px;";
-  bar.innerHTML = "🔧 Demo rejim: ma'lumotlar faqat shu brauzerda saqlanmoqda. Hisob tizimi va umumiy kutubxona uchun <code style=\"background:rgba(0,0,0,0.25);padding:1px 5px;border-radius:4px;\">index.html</code> ichida Firebase'ni sozlang (README.md).";
+  bar.innerHTML = "🔧 Demo rejim: ma'lumotlar faqat şu brauzerda saqlanmoqda. Hisob tizimi va umumiy kutubxona uçun <code style=\"background:rgba(0,0,0,0.25);padding:1px 5px;border-radius:4px;\">index.html</code> içida Firebase'ni sozlang (README.md).";
   document.getElementById("topbar").insertAdjacentElement("afterend", bar);
 }
 
@@ -1955,9 +1955,9 @@ async function boot() {
     State.user = { uid: "local", email: "Mehmon (lokal rejim)" };
     await loadUserData("local");
     document.getElementById("userEmail").textContent = "Mehmon (lokal)";
-    document.getElementById("userChip").querySelector("button").textContent = "Tozalash";
+    document.getElementById("userChip").querySelector("button").textContent = "Tozalaş";
     document.getElementById("userChip").querySelector("button").onclick = () => {
-      if (confirm("Shu brauzerdagi barcha saqlangan ma'lumotlarni o'chirasizmi?")) {
+      if (confirm("Şu brauzerdagi barça saqlangan ma'lumotlarni öçirasizmi?")) {
         localStorage.removeItem(LOCAL_KEY);
         State.difficult = {}; State.mistakes = {};
         State.vocab = State.vocab.filter(b => b.source === "static");
@@ -1975,7 +1975,7 @@ async function boot() {
     if (user) {
       State.user = user;
       await loadUserData(user.uid);
-      document.getElementById("userEmail").textContent = user.email || "Foydalanuvchi";
+      document.getElementById("userEmail").textContent = user.email || "Foydalanuvçi";
       await afterLogin();
     } else {
       State.user = null;
